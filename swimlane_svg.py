@@ -697,12 +697,13 @@ class BPMNSwimlaneEngine:
         label_svg = ""
         if label:
             lx, ly = self._compute_label_position(edge, pts)
-            lbl_w = len(label) * 6.8 + 14
-            lbl_col = "#DC2626" if is_violation else "#1E293B"
+            lbl_w = len(label) * 6.2 + 10
+            lbl_col = "#DC2626" if is_violation else "#334155"
+            border_col = "#FCA5A5" if is_violation else "#CBD5E1"
             label_svg = (
                 f'<g>'
-                f'  <rect x="{lx - lbl_w/2}" y="{ly - 8}" width="{lbl_w}" height="16" fill="#FFFFFF" rx="4" stroke="#CBD5E1" stroke-width="1" />'
-                f'  <text x="{lx}" y="{ly + 3.5}" text-anchor="middle" font-size="9" font-weight="600" fill="{lbl_col}">{html.escape(label)}</text>'
+                f'  <rect x="{lx - lbl_w/2}" y="{ly - 7}" width="{lbl_w}" height="14" fill="#FFFFFF" rx="3" stroke="{border_col}" stroke-width="0.8" />'
+                f'  <text x="{lx}" y="{ly + 3}" text-anchor="middle" font-size="8.5" font-weight="600" fill="{lbl_col}">{html.escape(label)}</text>'
                 f'</g>'
             )
 
@@ -731,7 +732,7 @@ class BPMNSwimlaneEngine:
         mid_y = (p1[1] + p2[1]) / 2
 
         if is_horiz:
-            return (mid_x, mid_y - 9)
+            return (mid_x, mid_y - 8)
         else:
             return (mid_x, mid_y)
 
@@ -758,9 +759,9 @@ def get_level1_spec(is_violating: bool = False) -> Tuple[str, List[Dict], List[D
     ]
     nodes = [
         {"id": "t_recv", "type": "task", "task_type": "service", "lane": "lane_intake", "label": "Receive Application &\nCreate Loan Dossier", "col": 1},
-        {"id": "xor_split", "type": "gateway_xor", "lane": "lane_intake", "label": "Route?", "col": 2},
+        {"id": "xor_split", "type": "gateway_xor", "lane": "lane_intake", "label": "", "col": 2},
         {"id": "t_check", "type": "task", "task_type": "service", "lane": "lane_risk", "label": "Mandatory Credit Check\n(Prerequisite)", "col": 3, "fill": "#EFF6FF", "stroke": "#2563EB"},
-        {"id": "xor_dec", "type": "gateway_xor", "lane": "lane_officer", "label": "Risk OK?", "col": 4},
+        {"id": "xor_dec", "type": "gateway_xor", "lane": "lane_officer", "label": "Eligible?", "col": 4},
         {"id": "t_app", "type": "task", "task_type": "user", "lane": "lane_officer", "label": "Loan Officer\nApprove Loan", "col": 5, "track": 0, "fill": "#DCFCE7", "stroke": "#16A34A"},
         {"id": "t_rej", "type": "task", "task_type": "user", "lane": "lane_officer", "label": "Loan Officer\nReject Loan", "col": 5, "track": 1, "fill": "#FEE2E2", "stroke": "#DC2626"},
         {"id": "end_app", "type": "end_event", "lane": "lane_officer", "label": "Approved", "col": 6, "track": 0},
@@ -769,20 +770,20 @@ def get_level1_spec(is_violating: bool = False) -> Tuple[str, List[Dict], List[D
     edges = [
         {"from": "p_start", "to": "p_submit"},
         {"from": "p_receive", "to": "p_end"},
-        {"from": "p_submit", "to": "t_recv", "label": "Application Dossier", "dashed": True},
+        {"from": "p_submit", "to": "t_recv", "dashed": True},
         {"from": "t_recv", "to": "xor_split"},
-        {"from": "xor_split", "to": "t_check", "label": "Standard Route"},
-        {"from": "t_check", "to": "xor_dec", "label": "Audit Complete"},
+        {"from": "xor_split", "to": "t_check"},
+        {"from": "t_check", "to": "xor_dec"},
         {"from": "xor_dec", "to": "t_app", "label": "Eligible"},
         {"from": "xor_dec", "to": "t_rej", "label": "Ineligible"},
         {"from": "t_app", "to": "end_app"},
         {"from": "t_rej", "to": "end_rej"},
-        {"from": "t_app", "to": "p_receive", "label": "Decision Letter", "dashed": True}
+        {"from": "t_app", "to": "p_receive", "dashed": True}
     ]
     if is_violating:
         edges.append({
             "from": "xor_split", "to": "t_app",
-            "label": "Direct Fast-Track (Bypass Credit Check)",
+            "label": "⚠️ Skip Credit Check",
             "violation": True
         })
     return "🏦 Pool: Commercial Lending Institution (Single-Tier Process)", lanes, nodes, edges, top_pool
@@ -806,10 +807,10 @@ def get_level2_spec(is_violating: bool = False) -> Tuple[str, List[Dict], List[D
     ]
     nodes = [
         {"id": "t_recv", "type": "task", "task_type": "service", "lane": "lane_intake", "label": "Commercial Intake &\nCreate Loan Dossier", "col": 1},
-        {"id": "and_split", "type": "gateway_and", "lane": "lane_audit", "label": "AND-Fork", "col": 2},
+        {"id": "and_split", "type": "gateway_and", "lane": "lane_audit", "label": "", "col": 2},
         {"id": "t_check", "type": "task", "task_type": "service", "lane": "lane_audit", "label": "Mandatory Credit Risk\nAssessment", "col": 3, "track": 0, "fill": "#EFF6FF", "stroke": "#2563EB"},
         {"id": "t_collateral", "type": "task", "task_type": "service", "lane": "lane_audit", "label": "Collateral Valuation &\nAsset Vetting", "col": 3, "track": 1},
-        {"id": "and_join", "type": "gateway_and", "lane": "lane_audit", "label": "AND-Join", "col": 4},
+        {"id": "and_join", "type": "gateway_and", "lane": "lane_audit", "label": "", "col": 4},
         {"id": "xor_eval", "type": "gateway_xor", "lane": "lane_manager", "label": "Low Risk?", "col": 5},
         {"id": "t_app", "type": "task", "task_type": "user", "lane": "lane_manager", "label": "Branch Manager\nApprove Loan", "col": 6, "track": 0, "fill": "#DCFCE7", "stroke": "#16A34A"},
         {"id": "t_rej", "type": "task", "task_type": "user", "lane": "lane_manager", "label": "Branch Manager\nReject Loan", "col": 6, "track": 1, "fill": "#FEE2E2", "stroke": "#DC2626"},
@@ -819,23 +820,23 @@ def get_level2_spec(is_violating: bool = False) -> Tuple[str, List[Dict], List[D
     edges = [
         {"from": "p_start", "to": "p_submit"},
         {"from": "p_receive", "to": "p_end"},
-        {"from": "p_submit", "to": "t_recv", "label": "Commercial Dossier", "dashed": True},
-        {"from": "t_recv", "to": "and_split", "label": "Audit Handoff"},
-        {"from": "and_split", "to": "t_check", "label": "Parallel 1"},
-        {"from": "and_split", "to": "t_collateral", "label": "Parallel 2"},
-        {"from": "t_check", "to": "and_join", "label": "Credit Cleared"},
-        {"from": "t_collateral", "to": "and_join", "label": "Collateral OK"},
-        {"from": "and_join", "to": "xor_eval", "label": "Audits Sync"},
-        {"from": "xor_eval", "to": "t_app", "label": "Yes"},
-        {"from": "xor_eval", "to": "t_rej", "label": "No"},
+        {"from": "p_submit", "to": "t_recv", "dashed": True},
+        {"from": "t_recv", "to": "and_split"},
+        {"from": "and_split", "to": "t_check"},
+        {"from": "and_split", "to": "t_collateral"},
+        {"from": "t_check", "to": "and_join"},
+        {"from": "t_collateral", "to": "and_join"},
+        {"from": "and_join", "to": "xor_eval"},
+        {"from": "xor_eval", "to": "t_app", "label": "Approved"},
+        {"from": "xor_eval", "to": "t_rej", "label": "Rejected"},
         {"from": "t_app", "to": "end_app"},
         {"from": "t_rej", "to": "end_rej"},
-        {"from": "t_app", "to": "p_receive", "label": "Disbursement Notice", "dashed": True}
+        {"from": "t_app", "to": "p_receive", "dashed": True}
     ]
     if is_violating:
         edges.append({
             "from": "t_collateral", "to": "t_app",
-            "label": "Skip Credit Audit (Premature Approval)",
+            "label": "⚠️ Skip Credit Assessment",
             "violation": True
         })
     return "🏦 Pool: Commercial Bank (Dual-Audit Concurrency)", lanes, nodes, edges, top_pool
@@ -846,10 +847,10 @@ def get_level3_spec(is_violating: bool = False) -> Tuple[str, List[Dict], List[D
     top_pool = {
         "title": "🏊 Pool: Customer / Borrower Portal",
         "nodes": [
-            {"id": "p_start", "type": "start_event", "label": "Access Portal", "col": 0},
+            {"id": "p_start", "type": "start_event", "label": "Start", "col": 0},
             {"id": "p_submit", "type": "task", "task_type": "user", "label": "Submit Syndicated\nLoan Request", "col": 1},
-            {"id": "p_resubmit", "type": "task", "task_type": "user", "label": "Upload Additional\nRequested Disclosures", "col": 7, "fill": "#FEF3C7"},
-            {"id": "p_receive", "type": "task", "task_type": "receive", "label": "Receive Official\nCommittee Decision", "col": 11},
+            {"id": "p_resubmit", "type": "task", "task_type": "user", "label": "Upload Requested\nDisclosures", "col": 7, "fill": "#FEF3C7"},
+            {"id": "p_receive", "type": "task", "task_type": "receive", "label": "Receive Official\nDecision Letter", "col": 11},
             {"id": "p_end", "type": "end_event", "label": "Completed", "col": 12}
         ]
     }
@@ -865,19 +866,19 @@ def get_level3_spec(is_violating: bool = False) -> Tuple[str, List[Dict], List[D
         {"id": "t_broker_vet", "type": "task", "task_type": "user", "lane": "lane_broker", "label": "Check Customer\nStanding & Privileges", "col": 2},
 
         # Lane 2: Technical & Collateral Audit
-        {"id": "and_split", "type": "gateway_and", "lane": "lane_audit", "label": "AND-Fork", "col": 3},
+        {"id": "and_split", "type": "gateway_and", "lane": "lane_audit", "label": "", "col": 3},
         {"id": "t_credit", "type": "task", "task_type": "service", "lane": "lane_audit", "label": "Mandatory Credit Risk\nAssessment", "col": 4, "track": 0, "fill": "#EFF6FF", "stroke": "#2563EB"},
-        {"id": "or_split", "type": "gateway_or", "lane": "lane_audit", "label": "OR-Split", "col": 4, "track": 1},
+        {"id": "or_split", "type": "gateway_or", "lane": "lane_audit", "label": "Collateral?", "col": 4, "track": 1},
         {"id": "t_prop", "type": "task", "task_type": "service", "lane": "lane_audit", "label": "Real Estate Appraisal\n(Collateral Track 1)", "col": 5, "track": 1},
         {"id": "t_guar", "type": "task", "task_type": "service", "lane": "lane_audit", "label": "Corporate Guarantor Audit\n(Collateral Track 2)", "col": 5, "track": 2},
-        {"id": "or_join", "type": "gateway_or", "lane": "lane_audit", "label": "OR-Join", "col": 6, "track": 1},
-        {"id": "and_join", "type": "gateway_and", "lane": "lane_audit", "label": "AND-Join", "col": 6, "track": 0},
+        {"id": "or_join", "type": "gateway_or", "lane": "lane_audit", "label": "", "col": 6, "track": 1},
+        {"id": "and_join", "type": "gateway_and", "lane": "lane_audit", "label": "", "col": 6, "track": 0},
 
         # Lane 3: Branch Credit Committee
         {"id": "xor_eval", "type": "gateway_xor", "lane": "lane_branch", "label": "Risk Tier?", "col": 7, "track": 1},
-        {"id": "t_rework", "type": "task", "task_type": "service", "lane": "lane_branch", "label": "Request Disclosures\n(Trigger Rework Loop)", "col": 7, "track": 0, "fill": "#FEF3C7", "stroke": "#D97706"},
+        {"id": "t_rework", "type": "task", "task_type": "service", "lane": "lane_branch", "label": "Request Additional Documents\n(Trigger Rework Loop)", "col": 7, "track": 0, "fill": "#FEF3C7", "stroke": "#D97706"},
         {"id": "t_low_app", "type": "task", "task_type": "user", "lane": "lane_branch", "label": "Standard Manager Approval\n(Low Risk)", "col": 8, "track": 0, "fill": "#DCFCE7", "stroke": "#16A34A"},
-        {"id": "t_rej", "type": "task", "task_type": "user", "lane": "lane_branch", "label": "Direct Reject\n(Critical Risk)", "col": 8, "track": 1, "fill": "#FEE2E2", "stroke": "#DC2626"},
+        {"id": "t_rej", "type": "task", "task_type": "user", "lane": "lane_branch", "label": "Reject Loan\n(Critical Risk)", "col": 8, "track": 1, "fill": "#FEE2E2", "stroke": "#DC2626"},
         {"id": "t_escalate", "type": "task", "task_type": "user", "lane": "lane_branch", "label": "Escalate to Senior Board\n(High Risk / Jumbo)", "col": 8, "track": 2, "fill": "#EDE9FE", "stroke": "#7C3AED"},
         {"id": "end_app_tier1", "type": "end_event", "lane": "lane_branch", "label": "Approved", "col": 9, "track": 0},
         {"id": "end_rej_tier1", "type": "end_event", "lane": "lane_branch", "label": "Rejected", "col": 9, "track": 1},
@@ -893,38 +894,38 @@ def get_level3_spec(is_violating: bool = False) -> Tuple[str, List[Dict], List[D
     edges = [
         {"from": "p_start", "to": "p_submit"},
         {"from": "p_receive", "to": "p_end"},
-        {"from": "p_submit", "to": "t_recv", "label": "Syndicated File", "dashed": True},
+        {"from": "p_submit", "to": "t_recv", "dashed": True},
         {"from": "t_recv", "to": "t_broker_vet"},
-        {"from": "t_broker_vet", "to": "and_split", "label": "Audit Handoff"},
-        {"from": "and_split", "to": "t_credit", "label": "Parallel 1"},
-        {"from": "and_split", "to": "or_split", "label": "Parallel 2"},
-        {"from": "or_split", "to": "t_prop", "label": "Property Track"},
-        {"from": "or_split", "to": "t_guar", "label": "Guarantor Track"},
+        {"from": "t_broker_vet", "to": "and_split"},
+        {"from": "and_split", "to": "t_credit"},
+        {"from": "and_split", "to": "or_split"},
+        {"from": "or_split", "to": "t_prop", "label": "Property"},
+        {"from": "or_split", "to": "t_guar", "label": "Guarantor"},
         {"from": "t_prop", "to": "or_join"},
         {"from": "t_guar", "to": "or_join"},
-        {"from": "t_credit", "to": "and_join", "label": "Credit Cleared"},
-        {"from": "or_join", "to": "and_join", "label": "Security Cleared"},
-        {"from": "and_join", "to": "xor_eval", "label": "Audits Vetted"},
-        {"from": "xor_eval", "to": "t_rework", "label": "Doc Incomplete"},
-        {"from": "t_rework", "to": "p_resubmit", "label": "Disclosures Required", "dashed": True},
-        {"from": "p_resubmit", "to": "xor_eval", "label": "Client Resubmission", "dashed": True},
+        {"from": "t_credit", "to": "and_join"},
+        {"from": "or_join", "to": "and_join"},
+        {"from": "and_join", "to": "xor_eval"},
+        {"from": "xor_eval", "to": "t_rework", "label": "Incomplete"},
+        {"from": "t_rework", "to": "p_resubmit", "dashed": True},
+        {"from": "p_resubmit", "to": "xor_eval", "dashed": True},
         {"from": "xor_eval", "to": "t_low_app", "label": "Low Risk"},
         {"from": "xor_eval", "to": "t_rej", "label": "Critical Risk"},
         {"from": "xor_eval", "to": "t_escalate", "label": "Jumbo Loan"},
         {"from": "t_low_app", "to": "end_app_tier1"},
         {"from": "t_rej", "to": "end_rej_tier1"},
-        {"from": "t_escalate", "to": "t_comm_rev", "label": "Escalation Handoff"},
+        {"from": "t_escalate", "to": "t_comm_rev"},
         {"from": "t_comm_rev", "to": "xor_comm"},
         {"from": "xor_comm", "to": "t_comm_app", "label": "Approved"},
         {"from": "xor_comm", "to": "t_comm_rej", "label": "Rejected"},
         {"from": "t_comm_app", "to": "end_app_tier2"},
         {"from": "t_comm_rej", "to": "end_rej_tier2"},
-        {"from": "t_comm_app", "to": "p_receive", "label": "Official Verdict", "dashed": True}
+        {"from": "t_comm_app", "to": "p_receive", "dashed": True}
     ]
     if is_violating:
         edges.append({
             "from": "t_escalate", "to": "t_comm_app",
-            "label": "Executive Override (Skip Committee Governance)",
+            "label": "⚠️ Executive Override (Skip Governance)",
             "violation": True
         })
     return "🏦 Pool: Corporate Loan Provider (Multi-Tier Financial Institution)", lanes, nodes, edges, top_pool

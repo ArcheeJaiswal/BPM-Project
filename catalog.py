@@ -148,8 +148,8 @@ COMPLEXITY_CATALOG = {
                     }
 
                     # Sequence Flows inside Loan Provider
-                    t_recv -> t_check [label="Cross-Lane Handoff"];
-                    t_check -> xor_dec [label="Risk Report"];
+                    t_recv -> t_check;
+                    t_check -> xor_dec;
                     xor_dec -> t_app [label="Eligible"];
                     xor_dec -> t_rej [label="Ineligible"];
                     t_app -> t_notify;
@@ -159,8 +159,8 @@ COMPLEXITY_CATALOG = {
                 }
 
                 # Cross-Pool Message Flows (Dashed arrows, exactly like BPMN standards)
-                p_submit -> t_recv [label="Application Dossier", style=dashed, color="#2563EB", penwidth=1.3];
-                t_notify -> p_receive_dec [label="Decision Letter", style=dashed, color="#2563EB", penwidth=1.3];
+                p_submit -> t_recv [style=dashed, color="#2563EB", penwidth=1.3];
+                t_notify -> p_receive_dec [style=dashed, color="#2563EB", penwidth=1.3];
             }
             """,
             "petri_net": {
@@ -317,13 +317,13 @@ COMPLEXITY_CATALOG = {
 
                     # Sequence Flows inside Loan Provider
                     t_recv -> xor_split;
-                    xor_split -> t_check [label="Standard Route"];
-                    t_check -> xor_dec [label="Handoff"];
+                    xor_split -> t_check;
+                    t_check -> xor_dec;
                     xor_dec -> t_app [label="Eligible"];
                     xor_dec -> t_rej [label="Ineligible"];
 
                     # Cross-Lane Violation Bypass Edge
-                    xor_split -> t_app [label="⚠️ Cross-Lane Bypass (Skip Lane 2)", color="#DC2626", fontcolor="#DC2626", style=dashed, penwidth=2.2];
+                    xor_split -> t_app [label="⚠️ Skip Credit Check", color="#DC2626", fontcolor="#DC2626", style=dashed, penwidth=2.2];
 
                     t_app -> t_notify;
                     t_rej -> t_notify;
@@ -332,8 +332,8 @@ COMPLEXITY_CATALOG = {
                 }
 
                 # Cross-Pool Message Flows
-                p_submit -> t_recv [label="Application Dossier", style=dashed, color="#2563EB", penwidth=1.3];
-                t_notify -> p_receive_dec [label="Decision Letter", style=dashed, color="#2563EB", penwidth=1.3];
+                p_submit -> t_recv [style=dashed, color="#2563EB", penwidth=1.3];
+                t_notify -> p_receive_dec [style=dashed, color="#2563EB", penwidth=1.3];
             }
             """,
             "petri_net": {
@@ -550,11 +550,11 @@ COMPLEXITY_CATALOG = {
 
                     # Sequence Flows inside Loan Provider
                     t_recv -> and_split;
-                    and_split -> t_credit [label="Concurrent Branch 1"];
-                    and_split -> t_kyc [label="Concurrent Branch 2"];
-                    t_credit -> and_join [label="Risk Cleared"];
-                    t_kyc -> and_join [label="KYC Cleared"];
-                    and_join -> xor_dec [label="Synchronized"];
+                    and_split -> t_credit;
+                    and_split -> t_kyc;
+                    t_credit -> and_join;
+                    t_kyc -> and_join;
+                    and_join -> xor_dec;
                     xor_dec -> t_app [label="Eligible"];
                     xor_dec -> t_rej [label="Ineligible"];
                     t_app -> t_notify;
@@ -564,8 +564,8 @@ COMPLEXITY_CATALOG = {
                 }
 
                 # Cross-Pool Message Flows (Dashed lines, matching picture!)
-                p_submit -> t_recv [label="Commercial Dossier", style=dashed, color="#2563EB", penwidth=1.3];
-                t_notify -> p_receive_dec [label="Commitment Notice", style=dashed, color="#2563EB", penwidth=1.3];
+                p_submit -> t_recv [style=dashed, color="#2563EB", penwidth=1.3];
+                t_notify -> p_receive_dec [style=dashed, color="#2563EB", penwidth=1.3];
             }
             """,
             "petri_net": {
@@ -768,15 +768,15 @@ COMPLEXITY_CATALOG = {
 
                     # Sequence Flows inside Loan Provider
                     t_recv -> and_split;
-                    and_split -> t_credit [label="Concurrent Branch 1"];
-                    and_split -> t_kyc [label="Concurrent Branch 2"];
-                    t_credit -> and_join [label="Risk Cleared"];
-                    t_kyc -> and_join [label="KYC Cleared"];
+                    and_split -> t_credit;
+                    and_split -> t_kyc;
+                    t_credit -> and_join;
+                    t_kyc -> and_join;
                     
                     # Cross-Lane Violation Bypass Edge
                     and_split -> and_join [label="⚠️ Skip Lane 2 (Credit Risk)", color="#DC2626", fontcolor="#DC2626", style=dashed, penwidth=2.2];
 
-                    and_join -> xor_dec [label="Decision"];
+                    and_join -> xor_dec;
                     xor_dec -> t_app [label="Eligible"];
                     xor_dec -> t_rej [label="Ineligible"];
                     t_app -> t_notify;
@@ -786,8 +786,8 @@ COMPLEXITY_CATALOG = {
                 }
 
                 # Cross-Pool Message Flows
-                p_submit -> t_recv [label="Commercial Dossier", style=dashed, color="#2563EB", penwidth=1.3];
-                t_notify -> p_receive_dec [label="Commitment Notice", style=dashed, color="#2563EB", penwidth=1.3];
+                p_submit -> t_recv [style=dashed, color="#2563EB", penwidth=1.3];
+                t_notify -> p_receive_dec [style=dashed, color="#2563EB", penwidth=1.3];
             }
             """,
             "petri_net": {
@@ -969,32 +969,32 @@ COMPLEXITY_CATALOG = {
                 end_rej [shape=doublecircle, label="", width=0.35, height=0.35, style=filled, fillcolor="#FCA5A5", color="#DC2626", penwidth=2];
 
                 start -> t_recv;
-                t_recv -> and_split [label="Intake Handoff"];
+                t_recv -> and_split;
                 
                 # Parallel Split into Credit and Inclusive Security Tracks
-                and_split -> t_credit [label="Parallel 1 (Credit)"];
-                and_split -> or_split [label="Parallel 2 (Security)"];
+                and_split -> t_credit;
+                and_split -> or_split;
 
                 # Inclusive OR Split: Property, Guarantor, or Both
-                or_split -> t_prop [label="Property Collateral"];
-                or_split -> t_guar [label="Guarantor Backed"];
-                t_prop -> or_join [label="Appraised"];
-                t_guar -> or_join [label="Vetted"];
+                or_split -> t_prop [label="Property"];
+                or_split -> t_guar [label="Guarantor"];
+                t_prop -> or_join;
+                t_guar -> or_join;
 
                 # Synchronizations
-                or_join -> and_join [label="Security Cleared"];
-                t_credit -> and_join [label="Credit Cleared"];
-                and_join -> xor_eval [label="Audits Synchronized"];
+                or_join -> and_join;
+                t_credit -> and_join;
+                and_join -> xor_eval;
 
                 # Exclusive XOR Choices
                 xor_eval -> t_low_app [label="Low Risk"];
                 xor_eval -> t_rej [label="Critical Risk"];
-                xor_eval -> t_rework [label="Doc Incomplete"];
-                t_rework -> t_resubmit [label="Sent to Borrower", style=dashed, color="#D97706"];
-                t_resubmit -> xor_eval [label="Re-evaluate", style=dashed, color="#D97706"];
+                xor_eval -> t_rework [label="Incomplete"];
+                t_rework -> t_resubmit [style=dashed, color="#D97706"];
+                t_resubmit -> xor_eval [style=dashed, color="#D97706"];
 
-                xor_eval -> t_escalate [label="High Risk / Jumbo"];
-                t_escalate -> t_comm_rev [label="Mandatory Escalation"];
+                xor_eval -> t_escalate [label="Jumbo Loan"];
+                t_escalate -> t_comm_rev;
                 t_comm_rev -> xor_comm;
                 xor_comm -> t_comm_app [label="Approved"];
                 xor_comm -> t_comm_rej [label="Rejected"];
@@ -1110,18 +1110,18 @@ COMPLEXITY_CATALOG = {
                     }
 
                     # Lane 1 -> Lane 2 Handoff
-                    t_recv -> and_split [label="Intake Handoff"];
+                    t_recv -> and_split;
                     
                     # Lane 2 Parallel & Inclusive Branching
-                    and_split -> t_credit [label="Parallel 1 (Credit)"];
-                    and_split -> or_split [label="Parallel 2 (Security)"];
-                    or_split -> t_prop [label="Property Collateral"];
-                    or_split -> t_guar [label="Guarantor Audit"];
-                    t_prop -> or_join [label="Property Cleared"];
-                    t_guar -> or_join [label="Guarantor Cleared"];
-                    or_join -> and_join [label="Security Cleared"];
-                    t_credit -> and_join [label="Credit Cleared"];
-                    and_join -> xor_eval [label="Audits Vetted"];
+                    and_split -> t_credit;
+                    and_split -> or_split;
+                    or_split -> t_prop [label="Property"];
+                    or_split -> t_guar [label="Guarantor"];
+                    t_prop -> or_join;
+                    t_guar -> or_join;
+                    or_join -> and_join;
+                    t_credit -> and_join;
+                    and_join -> xor_eval;
 
                     # Lane 3 Exclusive Decisions
                     xor_eval -> t_low_app [label="Low Risk"];
@@ -1129,7 +1129,7 @@ COMPLEXITY_CATALOG = {
 
                     # Cross-lane Escalation: Branch Manager -> Senior Committee
                     xor_eval -> t_escalate [label="Jumbo Loan"];
-                    t_escalate -> t_comm_rev [label="Escalation Handoff"];
+                    t_escalate -> t_comm_rev;
                     t_comm_rev -> xor_comm;
                     xor_comm -> t_comm_app [label="Approved"];
                     xor_comm -> t_comm_rej [label="Rejected"];
@@ -1146,11 +1146,11 @@ COMPLEXITY_CATALOG = {
                 }
 
                 # Cross-Pool Message Flows (Dashed lines, matching picture!)
-                p_submit -> t_recv [label="Syndicated File", style=dashed, color="#2563EB", penwidth=1.3];
-                xor_eval -> t_rework [label="Doc Incomplete"];
-                t_rework -> p_resubmit [label="Disclosures Required", style=dashed, color="#D97706", penwidth=1.3];
-                p_resubmit -> xor_eval [label="Client Resubmission", style=dashed, color="#D97706", penwidth=1.3];
-                t_notify -> p_receive_dec [label="Official Verdict", style=dashed, color="#2563EB", penwidth=1.3];
+                p_submit -> t_recv [style=dashed, color="#2563EB", penwidth=1.3];
+                xor_eval -> t_rework [label="Incomplete"];
+                t_rework -> p_resubmit [style=dashed, color="#D97706", penwidth=1.3];
+                p_resubmit -> xor_eval [style=dashed, color="#D97706", penwidth=1.3];
+                t_notify -> p_receive_dec [style=dashed, color="#2563EB", penwidth=1.3];
             }
             """,
             "petri_net": {
@@ -1371,38 +1371,38 @@ COMPLEXITY_CATALOG = {
                 end_rej [shape=doublecircle, label="", width=0.35, height=0.35, style=filled, fillcolor="#FCA5A5", color="#DC2626", penwidth=2];
 
                 start -> t_recv;
-                t_recv -> and_split [label="Intake Handoff"];
+                t_recv -> and_split;
                 
                 # Parallel Split
-                and_split -> t_credit [label="Parallel 1 (Credit)"];
-                and_split -> or_split [label="Parallel 2 (Security)"];
+                and_split -> t_credit;
+                and_split -> or_split;
 
                 # Inclusive OR Split
-                or_split -> t_prop [label="Property Collateral"];
-                or_split -> t_guar [label="Guarantor Backed"];
-                t_prop -> or_join [label="Appraised"];
-                t_guar -> or_join [label="Vetted"];
+                or_split -> t_prop [label="Property"];
+                or_split -> t_guar [label="Guarantor"];
+                t_prop -> or_join;
+                t_guar -> or_join;
 
                 # Synchronizations
-                or_join -> and_join [label="Security Cleared"];
-                t_credit -> and_join [label="Credit Cleared"];
-                and_join -> xor_eval [label="Audits Synchronized"];
+                or_join -> and_join;
+                t_credit -> and_join;
+                and_join -> xor_eval;
 
                 # Exclusive XOR Choices
                 xor_eval -> t_low_app [label="Low Risk"];
                 xor_eval -> t_rej [label="Critical Risk"];
-                xor_eval -> t_rework [label="Doc Incomplete"];
-                t_rework -> t_resubmit [label="Sent to Borrower"];
-                t_resubmit -> xor_eval [label="Re-evaluate", style=dashed, color="#D97706"];
+                xor_eval -> t_rework [label="Incomplete"];
+                t_rework -> t_resubmit [style=dashed, color="#D97706"];
+                t_resubmit -> xor_eval [style=dashed, color="#D97706"];
 
-                xor_eval -> t_escalate [label="High Risk / Jumbo"];
-                t_escalate -> t_comm_rev [label="Mandatory Escalation"];
+                xor_eval -> t_escalate [label="Jumbo Loan"];
+                t_escalate -> t_comm_rev;
                 t_comm_rev -> xor_comm;
                 xor_comm -> t_comm_app [label="Approved"];
                 xor_comm -> t_comm_rej [label="Rejected"];
 
                 # Compliance Violation: Unauthorized Executive Fast-Track Override
-                t_escalate -> t_comm_app [label="⚠️ Executive Fast-Track Override (Skip Committee Review)", color="#DC2626", fontcolor="#DC2626", style=dashed, penwidth=2];
+                t_escalate -> t_comm_app [label="⚠️ Fast-Track Override (Skip Governance)", color="#DC2626", fontcolor="#DC2626", style=dashed, penwidth=2];
 
                 t_low_app -> end_app;
                 t_comm_app -> end_app;
@@ -1515,18 +1515,18 @@ COMPLEXITY_CATALOG = {
                     }
 
                     # Lane 1 -> Lane 2 Handoff
-                    t_recv -> and_split [label="Intake Handoff"];
+                    t_recv -> and_split;
                     
                     # Lane 2 Parallel & Inclusive Branching
-                    and_split -> t_credit [label="Parallel 1 (Credit)"];
-                    and_split -> or_split [label="Parallel 2 (Security)"];
-                    or_split -> t_prop [label="Property Collateral"];
-                    or_split -> t_guar [label="Guarantor Audit"];
-                    t_prop -> or_join [label="Property Cleared"];
-                    t_guar -> or_join [label="Guarantor Cleared"];
-                    or_join -> and_join [label="Security Cleared"];
-                    t_credit -> and_join [label="Credit Cleared"];
-                    and_join -> xor_eval [label="Audits Vetted"];
+                    and_split -> t_credit;
+                    and_split -> or_split;
+                    or_split -> t_prop [label="Property"];
+                    or_split -> t_guar [label="Guarantor"];
+                    t_prop -> or_join;
+                    t_guar -> or_join;
+                    or_join -> and_join;
+                    t_credit -> and_join;
+                    and_join -> xor_eval;
 
                     # Lane 3 Exclusive Decisions
                     xor_eval -> t_low_app [label="Low Risk"];
@@ -1534,13 +1534,13 @@ COMPLEXITY_CATALOG = {
 
                     # Escalation
                     xor_eval -> t_escalate [label="Jumbo Loan"];
-                    t_escalate -> t_comm_rev [label="Mandatory Path"];
+                    t_escalate -> t_comm_rev;
                     t_comm_rev -> xor_comm;
                     xor_comm -> t_comm_app [label="Approved"];
                     xor_comm -> t_comm_rej [label="Rejected"];
 
                     # Unauthorized Executive Fast-Track Override
-                    t_escalate -> t_comm_app [label="⚠️ Executive Fast-Track Override (Skip Committee Review)", color="#DC2626", fontcolor="#DC2626", style=dashed, penwidth=2.2];
+                    t_escalate -> t_comm_app [label="⚠️ Fast-Track Override (Skip Governance)", color="#DC2626", fontcolor="#DC2626", style=dashed, penwidth=2.2];
 
                     t_low_app -> t_notify;
                     t_comm_app -> t_notify;
@@ -1554,11 +1554,11 @@ COMPLEXITY_CATALOG = {
                 }
 
                 # Cross-Pool Message Flows
-                p_submit -> t_recv [label="Syndicated File", style=dashed, color="#2563EB", penwidth=1.3];
-                xor_eval -> t_rework [label="Doc Incomplete"];
-                t_rework -> p_resubmit [label="Disclosures Required", style=dashed, color="#D97706", penwidth=1.3];
-                p_resubmit -> xor_eval [label="Client Resubmission", style=dashed, color="#D97706", penwidth=1.3];
-                t_notify -> p_receive_dec [label="Official Verdict", style=dashed, color="#2563EB", penwidth=1.3];
+                p_submit -> t_recv [style=dashed, color="#2563EB", penwidth=1.3];
+                xor_eval -> t_rework [label="Incomplete"];
+                t_rework -> p_resubmit [style=dashed, color="#D97706", penwidth=1.3];
+                p_resubmit -> xor_eval [style=dashed, color="#D97706", penwidth=1.3];
+                t_notify -> p_receive_dec [style=dashed, color="#2563EB", penwidth=1.3];
             }
             """,
             "petri_net": {
