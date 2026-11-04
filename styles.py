@@ -160,6 +160,21 @@ def apply_custom_css():
             border-radius: 5px !important;
         }
 
+        section[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] button {
+            background-color: #F1F5F9 !important;
+            border: 1px solid #CBD5E1 !important;
+            color: #1E3A8A !important;
+            padding: 4px 6px !important;
+            border-radius: 6px !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+            cursor: pointer !important;
+        }
+        section[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] button:hover {
+            background-color: #E2E8F0 !important;
+            border-color: #94A3B8 !important;
+            color: #1D4ED8 !important;
+        }
+
         .sidebar-card {
             background-color: #FFFFFF !important;
             border: 1px solid #CBD5E1 !important;
@@ -178,27 +193,86 @@ def apply_custom_css():
             padding: 5px 8px !important;
         }
 
-        /* Hide Streamlit Deploy and Menu */
+        /* Hide Streamlit Deploy, Menu, Decoration, and Footer while keeping Sidebar Controls */
         #MainMenu, 
         .stDeployButton, 
         div[data-testid="stDeployButton"], 
-        [data-testid="stToolbar"], 
         footer,
         [data-testid="stDecoration"],
-        [data-testid="stStatusWidget"] {
+        [data-testid="stStatusWidget"],
+        div[class*="StyledHeaderRightSection"] {
             display: none !important;
             visibility: hidden !important;
             height: 0 !important;
             width: 0 !important;
         }
 
+        /* Header & Toolbar: Transparent and non-interfering with page content */
         header[data-testid="stHeader"] {
             background: transparent !important;
-            height: 1.2rem !important;
+            height: 3rem !important;
+            z-index: 9999 !important;
+            pointer-events: none !important;
+        }
+
+        div[data-testid="stToolbar"] {
+            display: flex !important;
+            visibility: visible !important;
+            height: 100% !important;
+            width: 100% !important;
+            background: transparent !important;
+            pointer-events: none !important;
+        }
+
+        div[data-testid="stToolbar"] > div {
+            pointer-events: auto !important;
+        }
+
+        /* Prominent, clickable Sidebar Expand Button when sidebar is collapsed */
+        [data-testid="stSidebarCollapsedControl"],
+        button[data-testid="stExpandSidebarButton"],
+        div[data-testid="stToolbar"] button[data-testid="stExpandSidebarButton"],
+        div[class*="StyledOpenSidebarButton"] button {
+            display: inline-flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            background-color: #FFFFFF !important;
+            color: #1E3A8A !important;
+            border: 1.5px solid #94A3B8 !important;
+            border-radius: 6px !important;
+            padding: 4px 8px !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12) !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            z-index: 100000 !important;
+            transition: all 0.2s ease-in-out !important;
+            margin-top: 6px !important;
+            margin-left: 8px !important;
+        }
+
+        [data-testid="stSidebarCollapsedControl"]:hover,
+        button[data-testid="stExpandSidebarButton"]:hover,
+        div[data-testid="stToolbar"] button[data-testid="stExpandSidebarButton"]:hover,
+        div[class*="StyledOpenSidebarButton"] button:hover {
+            background-color: #EFF6FF !important;
+            border-color: #2563EB !important;
+            color: #1D4ED8 !important;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.22) !important;
+            transform: translateX(2px) !important;
+        }
+
+        /* Ensure icon svgs are crisp and visible */
+        [data-testid="stSidebarCollapseButton"] svg,
+        [data-testid="stExpandSidebarButton"] svg,
+        [data-testid="stSidebarCollapsedControl"] svg {
+            fill: currentColor !important;
+            color: inherit !important;
+            width: 1.25rem !important;
+            height: 1.25rem !important;
         }
 
         .block-container {
-            padding-top: 1.2rem !important;
+            padding-top: 3rem !important;
             padding-bottom: 2rem !important;
         }
 
