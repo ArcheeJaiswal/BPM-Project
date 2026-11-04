@@ -88,6 +88,10 @@ def generate_petri_net_dot(petri_net: Dict[str, Any], current_marking: Optional[
             fill = "#059669" if "Approve" in t_info["label"] else "#DC2626"
             fontcolor = "white"
             color = "#047857" if "Approve" in t_info["label"] else "#B91C1C"
+        elif t_type == "gateway":
+            fill = "#D97706"
+            fontcolor = "white"
+            color = "#B45309"
         else:
             fill = "#475569"
             fontcolor = "white"
@@ -109,16 +113,35 @@ def generate_petri_net_dot(petri_net: Dict[str, Any], current_marking: Optional[
             lane = t_info.get("lane", "General Workflow")
             lanes.setdefault(lane, {"places": [], "transitions": []})["transitions"].append((t_id, t_info))
 
+        # Enclose all lanes within an outer Pool box (BPMN Pool containing Lanes)
+        dot_lines.append('    subgraph cluster_pn_pool {')
+        dot_lines.append('        label = "🏦 Pool: Loan Provider Organization (WF-Net)";')
+        dot_lines.append('        style = "filled";')
+        dot_lines.append('        fillcolor = "#FFFFFF";')
+        dot_lines.append('        color = "#1E3A8A";')
+        dot_lines.append('        penwidth = 2.5;')
+        dot_lines.append('        fontsize = 12;')
+        dot_lines.append('        fontcolor = "#1E3A8A";')
+        dot_lines.append("")
+
+        lane_styles = [
+            ("#EFF6FF", "#3B82F6", "#1D4ED8"),  # Blue (Broker / Front Office)
+            ("#FEFCE8", "#F59E0B", "#B45309"),  # Yellow (Risk & Audit)
+            ("#FFF1F2", "#F43F5E", "#BE123C"),  # Pink (Processing / Committee)
+            ("#FAF5FF", "#A855F7", "#7E22CE"),  # Purple (Manager / Executive)
+            ("#F0FDF4", "#16A34A", "#166534"),  # Green (Portal / Client)
+        ]
+
         for idx, (lane_name, elements) in enumerate(lanes.items()):
-            fill = "#F8FAFC" if idx % 2 == 0 else "#F1F5F9"
-            dot_lines.append(f'    subgraph cluster_pn_lane_{idx} {{')
-            dot_lines.append(f'        label = "🏊 {lane_name}";')
-            dot_lines.append('        style = "filled,rounded";')
-            dot_lines.append(f'        fillcolor = "{fill}";')
-            dot_lines.append('        color = "#94A3B8";')
-            dot_lines.append('        penwidth = 1.5;')
-            dot_lines.append('        fontsize = 11;')
-            dot_lines.append('        fontcolor = "#1E3A8A";')
+            fill, border, fontc = lane_styles[idx % len(lane_styles)]
+            dot_lines.append(f'        subgraph cluster_pn_lane_{idx} {{')
+            dot_lines.append(f'            label = "🏊 {lane_name}";')
+            dot_lines.append('            style = "filled,rounded";')
+            dot_lines.append(f'            fillcolor = "{fill}";')
+            dot_lines.append(f'            color = "{border}";')
+            dot_lines.append('            penwidth = 1.5;')
+            dot_lines.append('            fontsize = 11;')
+            dot_lines.append(f'            fontcolor = "{fontc}";')
             dot_lines.append("")
 
             for p in elements["places"]:
@@ -126,8 +149,11 @@ def generate_petri_net_dot(petri_net: Dict[str, Any], current_marking: Optional[
             for t_id, t_info in elements["transitions"]:
                 dot_lines.append(render_transition(t_id, t_info))
 
-            dot_lines.append("    }")
+            dot_lines.append("        }")
             dot_lines.append("")
+
+        dot_lines.append('    }')
+        dot_lines.append("")
     else:
         for p in petri_net["places"]:
             dot_lines.append(render_place(p))

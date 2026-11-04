@@ -16,6 +16,7 @@ Modular Architecture:
 """
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 # Import dedicated modular functions
 from catalog import COMPLEXITY_CATALOG
@@ -24,6 +25,7 @@ from reachability import discover_all_execution_paths
 from verifier import verify_path_compliance
 from visualizer import generate_petri_net_dot
 from styles import apply_custom_css
+from swimlane_svg import get_swimlane_svg, get_swimlane_dimensions
 
 
 # ======================================================================================
@@ -52,8 +54,8 @@ def reset_downstream_stages():
     st.session_state.sim_history = []
 
 
-if "active_complexity_key" not in st.session_state:
-    st.session_state.active_complexity_key = "level1"
+if "active_complexity_key" not in st.session_state or st.session_state.active_complexity_key not in COMPLEXITY_CATALOG:
+    st.session_state.active_complexity_key = "level3"
 if "active_variant" not in st.session_state:
     st.session_state.active_variant = "compliant"
 if "petri_generated" not in st.session_state:
@@ -85,7 +87,7 @@ with st.sidebar:
     complexity_options = {
         "level1": "🟢 Level 1: Basic (Sequential + XOR)",
         "level2": "🟡 Level 2: Medium (Parallel AND Gateways)",
-        "level3": "🔴 Level 3: Advanced (Multi-Tier & Rework)"
+        "level3": "🔴 Level 3: Advanced (Multi-Gateway: Inclusive, Parallel & XOR)"
     }
 
     selected_complexity = st.selectbox(
@@ -157,7 +159,7 @@ st.markdown("""
         <span style="font-size: 1.35rem;">⚖️</span>
         <div>
             <div style="font-size: 1.15rem; font-weight: 800; color: #1E3A8A; line-height: 1.1;">Compliance Verification Studio</div>
-            <div style="font-size: 0.76rem; color: #64748B;">Unified Domain: Banking Loan Origination Across 3 Architectural Complexities with Swimlanes</div>
+            <div style="font-size: 0.76rem; color: #64748B;">Unified Domain: Banking Loan Origination Across Progressive Complexities with Multi-Type Gateways (AND, OR, XOR) & Swimlanes</div>
         </div>
     </div>
     <div>
@@ -193,7 +195,7 @@ with c4:
 st.markdown("<hr style='margin: 8px 0; border: none; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------------
-# STAGE 1: BPMN MODEL (WITH SWIMLANES TOGGLE)
+# STAGE 1: BPMN 2.0 ORGANIZATIONAL SWIMLANE MODEL
 # ----------------------------------------------------------------------------------
 st.markdown(f"### 1. BPMN Process Model: {active_comp['complexity_badge']} {active_comp['title']}")
 
@@ -211,21 +213,35 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Diagram View Selector: Swimlane vs Streamlined
-col_view1, col_view2 = st.columns([2, 3])
-with col_view1:
-    bpmn_view_choice = st.radio(
-        "Select BPMN Diagram Layout:",
-        options=["🏊 Swimlane View (Organizational Roles)", "🔀 Streamlined Control-Flow View"],
-        horizontal=True
-    )
+st.caption("Displaying publication-grade BPMN 2.0 organizational swimlanes with left vertical headers and orthogonal obstacle-avoiding routing.")
 
-if "Swimlane" in bpmn_view_choice and "bpmn_swimlane_dot" in active_var_data:
-    st.caption("Displaying BPMN Pool & Swimlanes partitioning tasks across organizational departments.")
-    st.graphviz_chart(active_var_data["bpmn_swimlane_dot"], use_container_width=True)
-else:
-    st.caption("Displaying compact control-flow sequence graph.")
-    st.graphviz_chart(active_var_data["bpmn_dot"], use_container_width=True)
+svg_w, svg_h = get_swimlane_dimensions(st.session_state.active_complexity_key, st.session_state.active_variant)
+svg_content = get_swimlane_svg(st.session_state.active_complexity_key, st.session_state.active_variant)
+container_h = int(svg_h + 30)
+
+html_wrapper = f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body {{ margin: 0; padding: 0; background: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }}
+  .scroll-wrapper {{ width: 100%; overflow-x: auto; overflow-y: hidden; background: #FFFFFF; padding: 6px; box-sizing: border-box; }}
+</style>
+</head>
+<body>
+  <div class="scroll-wrapper">
+    {svg_content}
+  </div>
+</body>
+</html>"""
+
+components.html(html_wrapper, height=container_h, scrolling=True)
+st.download_button(
+    label="📥 Download BPMN 2.0 Swimlane Diagram (SVG)",
+    data=svg_content,
+    file_name=f"bpmn_swimlane_{st.session_state.active_complexity_key}_{st.session_state.active_variant}.svg",
+    mime="image/svg+xml"
+)
 
 # ----------------------------------------------------------------------------------
 # STAGE 2: PETRI NET GENERATION & TOKEN SIMULATOR (WITH SWIMLANE PARTITION)
