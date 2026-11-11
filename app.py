@@ -27,6 +27,7 @@ from verifier import verify_path_compliance
 from visualizer import generate_petri_net_dot
 from styles import apply_custom_css
 from swimlane_svg import get_swimlane_svg, get_swimlane_dimensions
+from bpmn_compiler import parse_bpmn_xml, compile_parsed_model_to_petri_net, get_sample_reimbursement_bpmn
 
 
 # ======================================================================================
@@ -69,6 +70,14 @@ if "token_marking" not in st.session_state:
     st.session_state.token_marking = None
 if "sim_history" not in st.session_state:
     st.session_state.sim_history = []
+if "custom_model_active" not in st.session_state:
+    st.session_state.custom_model_active = False
+if "custom_petri_net" not in st.session_state:
+    st.session_state.custom_petri_net = None
+if "custom_rule_spec" not in st.session_state:
+    st.session_state.custom_rule_spec = None
+if "custom_title" not in st.session_state:
+    st.session_state.custom_title = ""
 
 
 # ======================================================================================
@@ -116,11 +125,13 @@ with st.sidebar:
         selected_variant != st.session_state.active_variant):
         st.session_state.active_complexity_key = selected_complexity
         st.session_state.active_variant = selected_variant
+        st.session_state.custom_model_active = False
         reset_downstream_stages()
         st.rerun()
 
     # Reset Button
     if st.button("🔄 Reset Workflow Stages", use_container_width=True):
+        st.session_state.custom_model_active = False
         reset_downstream_stages()
         st.rerun()
 
@@ -174,10 +185,25 @@ st.markdown("""
 
 
 # Active data references
-active_comp = COMPLEXITY_CATALOG[st.session_state.active_complexity_key]
-active_var_data = active_comp[st.session_state.active_variant]
-petri_net_spec = active_var_data["petri_net"]
-rule_spec = active_comp["rule_spec"]
+is_custom_mode = st.session_state.get("custom_model_active", False) and st.session_state.get("custom_petri_net") is not None
+
+if is_custom_mode:
+    active_comp = {
+        "title": st.session_state.custom_title,
+        "complexity_badge": "📤 Custom Ingestion",
+        "domain": "Ingested BPMN 2.0 Workflow",
+        "architecture_summary": "Compiled Place/Transition Net via LLM Ingestion Pipeline",
+        "concurrency_degree": "Arbitrary P/T Net Topology",
+        "rule_text": st.session_state.custom_rule_spec["rule_text"],
+        "swimlane_roles": ["Claimant / Intake", "Finance & Audit Group", "Approval Authority"]
+    }
+    petri_net_spec = st.session_state.custom_petri_net
+    rule_spec = st.session_state.custom_rule_spec
+else:
+    active_comp = COMPLEXITY_CATALOG[st.session_state.active_complexity_key]
+    active_var_data = active_comp[st.session_state.active_variant]
+    petri_net_spec = active_var_data["petri_net"]
+    rule_spec = active_comp["rule_spec"]
 
 # Stage Indicators
 c1, c2, c3, c4 = st.columns(4)
@@ -193,12 +219,125 @@ with c4:
     s4 = "<strong style='color: #15803D;'>🟢 Done</strong>" if st.session_state.report_generated else "<span style='color: #94A3B8;'>⚪ Pending</span>"
     st.markdown(f"<small style='color: #64748B;'>4. Diagnostic Report</small><br>{s4}", unsafe_allow_html=True)
 
+# ----------------------------------------------------------------------------------
+# UPLOAD CUSTOM BPMN & AUTOMATED PETRI NET COMPILER PIPELINE
+# ----------------------------------------------------------------------------------
+with st.expander("📤 Ingest Custom BPMN Model (Live LLM/Parser Ingestion & Petri Net Compiler Pipeline)", expanded=is_custom_mode):
+    st.markdown("""
+    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.84rem;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+            <span style="background: #EFF6FF; color: #1D4ED8; font-weight: 700; font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; border: 1px solid #BFDBFE;">BPMN 2.0 XML Ingestion</span>
+            <span style="background: #ECFDF5; color: #047857; font-weight: 700; font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; border: 1px solid #A7F3D0;">LLM Semantic Role-Binding</span>
+            <span style="background: #FAF5FF; color: #7E22CE; font-weight: 700; font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; border: 1px solid #E9D5FF;">Formal P/T Net Synthesis</span>
+        </div>
+        <p style="margin: 0; color: #334155;">
+            Upload an arbitrary BPMN 2.0 XML diagram (<code>.bpmn</code> / <code>.xml</code>) or select a benchmark workflow from the dataset. 
+            The pipeline parses collaboration structures, extracts swimlanes, normalizes tasks using LLM semantic role-binding, and compiles the model into a formal <strong>Place/Transition Workflow Net $(P, T, F, M_0)$</strong> ready for reachability verification.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    up_c1, up_c2 = st.columns([1, 1])
+    with up_c1:
+        uploaded_file = st.file_uploader("1. Upload custom BPMN 2.0 XML File:", type=["bpmn", "xml", "json"], key="bpmn_file_uploader")
+    with up_c2:
+        preset_options = [
+            "-- Select a Dataset Model --",
+            "📄 dataset/level1_compliant.bpmn",
+            "📄 dataset/level1_violating.bpmn",
+            "📄 dataset/level2_compliant.bpmn",
+            "📄 dataset/level2_violating.bpmn",
+            "📄 dataset/level3_compliant.bpmn",
+            "📄 dataset/level3_violating.bpmn",
+            "📄 Corporate Reimbursement Workflow (Three-Way Match Audit)"
+        ]
+        selected_preset = st.selectbox("2. Or choose a benchmark BPMN model from dataset:", options=preset_options, key="bpmn_preset_selector")
+
+    xml_to_process = None
+    source_name = ""
+
+    if uploaded_file is not None:
+        try:
+            xml_to_process = uploaded_file.read().decode("utf-8")
+            source_name = uploaded_file.name
+        except Exception as e:
+            st.error(f"Error reading uploaded file: {e}")
+    elif selected_preset != "-- Select a Dataset Model --":
+        if "Reimbursement" in selected_preset:
+            xml_to_process = get_sample_reimbursement_bpmn()
+            source_name = "Corporate Reimbursement Workflow"
+        else:
+            clean_path = selected_preset.replace("📄 ", "").strip()
+            if os.path.exists(clean_path):
+                with open(clean_path, "r", encoding="utf-8") as f:
+                    xml_to_process = f.read()
+                source_name = clean_path
+
+    if xml_to_process:
+        parsed_res = parse_bpmn_xml(xml_to_process)
+        if "error" in parsed_res:
+            st.error(f"Failed to parse XML: {parsed_res['error']}")
+        else:
+            compiled_model = compile_parsed_model_to_petri_net(parsed_res, source_name)
+            p_net = compiled_model["petri_net"]
+            r_spec = compiled_model["rule_spec"]
+            stats = compiled_model["stats"]
+
+            st.markdown(f"""
+            <div style="background: #FFFFFF; border: 1.5px solid #22C55E; border-radius: 6px; padding: 10px 14px; margin: 10px 0;">
+                <div style="font-weight: 800; color: #15803D; margin-bottom: 6px; font-size: 0.95rem;">
+                    ✅ Compilation Successful: {source_name}
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; font-size: 0.82rem; color: #334155;">
+                    <div><strong>Step 1: XML Parsing</strong><br><span style="color: #64748B;">{parsed_res['pools_count']} Pool(s), {parsed_res['lanes_count']} Lane(s), {parsed_res['nodes_count']} Flow Nodes, {parsed_res['edges_count']} Flows</span></div>
+                    <div><strong>Step 2: LLM Role-Binding</strong><br><span style="color: #64748B;">Assigned stable IDs: <code>{r_spec['prerequisite']}</code> &bull; <code>{r_spec['target']}</code></span></div>
+                    <div><strong>Step 3: Formal P/T Net</strong><br><span style="color: #64748B;">Synthesized {stats['places_count']} Places, {stats['transitions_count']} Transitions, {stats['arcs_count']} Arcs</span></div>
+                    <div><strong>Step 4: Rule Ingestion</strong><br><span style="color: #64748B;">{r_spec['rule_text']}</span></div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            tab_elem, tab_code = st.tabs(["📋 Extracted BPMN Flow Nodes", "⚙️ Synthesized Petri Net Specification (P, T, F, M0)"])
+            with tab_elem:
+                node_rows = []
+                for n in parsed_res.get("nodes", []):
+                    node_rows.append({
+                        "Node ID": n["id"],
+                        "Activity / Event Name": n["name"],
+                        "Type": n["type"].replace("_", " ").title()
+                    })
+                st.dataframe(node_rows, use_container_width=True)
+
+            with tab_code:
+                st.json(compiled_model)
+
+            btn_col1, btn_col2 = st.columns([1, 1])
+            with btn_col1:
+                if st.button("🚀 Load Compiled Net into Studio Verification Engine", type="primary", use_container_width=True):
+                    st.session_state.custom_model_active = True
+                    st.session_state.custom_petri_net = p_net
+                    st.session_state.custom_rule_spec = r_spec
+                    st.session_state.custom_title = compiled_model["title"]
+                    reset_downstream_stages()
+                    st.rerun()
+
+            with btn_col2:
+                if st.session_state.get("custom_model_active", False):
+                    if st.button("↩️ Revert to Standard Catalog Mode", use_container_width=True):
+                        st.session_state.custom_model_active = False
+                        reset_downstream_stages()
+                        st.rerun()
+
 st.markdown("<hr style='margin: 8px 0; border: none; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------------
 # STAGE 1: BPMN 2.0 ORGANIZATIONAL SWIMLANE MODEL
 # ----------------------------------------------------------------------------------
-st.markdown(f"### 1. BPMN Process Model: {active_comp['complexity_badge']} {active_comp['title']}")
+if is_custom_mode:
+    st.markdown(f"### 1. BPMN Process Model: {active_comp['complexity_badge']} {active_comp['title']}")
+    st.info(f"🟢 **Live Ingestion Mode Active**: Currently analyzing **{active_comp['title']}**. Rule: *\"{active_comp['rule_text']}\"*")
+else:
+    st.markdown(f"### 1. BPMN Process Model: {active_comp['complexity_badge']} {active_comp['title']}")
 
 v_badge = '<span class="badge-compliant">Compliant Model</span>' if st.session_state.active_variant == 'compliant' else '<span class="badge-violation">Model with Violation</span>'
 
