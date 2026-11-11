@@ -1,0 +1,773 @@
+{
+  "model_id": "level3_compliant",
+  "title": "Level 3: Advanced (Multi-Gateway: Inclusive, Parallel & Exclusive)",
+  "variant": "compliant",
+  "domain": "Corporate & Syndicated Commercial Lending",
+  "architecture_summary": "Multi-Gateway Architecture: Parallel AND Fork/Join + Inclusive OR Collateral Vetting + Multi-Tier Exclusive XOR Decisions & Document Rework Loop",
+  "concurrency_degree": "Multi-Token Concurrency (AND/OR Gateways) + Cyclic State Space (Rework Loop)",
+  "compliance_rule": {
+    "text": "All approved loans must have Credit Risk Assessment, and High-Risk/Escalated loans must strictly obtain Senior Credit Committee Review before Committee Approval.",
+    "rule_spec": {
+      "prerequisite": "Credit Risk Assessment",
+      "target": "Approve",
+      "escalation_rule": {
+        "trigger": "Escalate to Senior Risk Committee",
+        "prerequisite": "Senior Committee Review",
+        "target": "Committee Approve Loan"
+      }
+    }
+  },
+  "pools": {
+    "top_pool": {
+      "title": "\ud83c\udfca Pool: Customer / Borrower Portal",
+      "nodes": [
+        {
+          "id": "p_start",
+          "type": "start_event",
+          "label": "Start",
+          "col": 0
+        },
+        {
+          "id": "p_submit",
+          "type": "task",
+          "task_type": "user",
+          "label": "Submit Syndicated\nLoan Request",
+          "col": 1
+        },
+        {
+          "id": "p_resubmit",
+          "type": "task",
+          "task_type": "user",
+          "label": "Upload Requested\nDisclosures",
+          "col": 7,
+          "fill": "#FEF3C7"
+        },
+        {
+          "id": "p_receive",
+          "type": "task",
+          "task_type": "receive",
+          "label": "Receive Official\nDecision Letter",
+          "col": 11
+        },
+        {
+          "id": "p_end",
+          "type": "end_event",
+          "label": "Completed",
+          "col": 12
+        }
+      ]
+    },
+    "primary_pool": {
+      "title": "\ud83c\udfe6 Pool: Corporate Loan Provider (Multi-Tier Financial Institution)",
+      "lanes": [
+        {
+          "id": "lane_broker",
+          "name": "Commercial Credit Broker",
+          "bg": "#EFF6FF"
+        },
+        {
+          "id": "lane_audit",
+          "name": "Technical & Collateral Audit",
+          "bg": "#FEFCE8"
+        },
+        {
+          "id": "lane_branch",
+          "name": "Branch Credit Committee",
+          "bg": "#FFF1F2"
+        },
+        {
+          "id": "lane_executive",
+          "name": "Senior Committee & Board",
+          "bg": "#FAF5FF"
+        }
+      ]
+    }
+  },
+  "flow_nodes": [
+    {
+      "id": "t_recv",
+      "type": "task",
+      "task_type": "service",
+      "lane": "lane_broker",
+      "label": "Receive Application &\nCreate Loan Dossier",
+      "col": 1
+    },
+    {
+      "id": "t_broker_vet",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_broker",
+      "label": "Check Customer\nStanding & Privileges",
+      "col": 2
+    },
+    {
+      "id": "and_split",
+      "type": "gateway_and",
+      "lane": "lane_audit",
+      "label": "",
+      "col": 3
+    },
+    {
+      "id": "t_credit",
+      "type": "task",
+      "task_type": "service",
+      "lane": "lane_audit",
+      "label": "Mandatory Credit Risk\nAssessment",
+      "col": 4,
+      "track": 0,
+      "fill": "#EFF6FF",
+      "stroke": "#2563EB"
+    },
+    {
+      "id": "or_split",
+      "type": "gateway_or",
+      "lane": "lane_audit",
+      "label": "Collateral?",
+      "col": 4,
+      "track": 1
+    },
+    {
+      "id": "t_prop",
+      "type": "task",
+      "task_type": "service",
+      "lane": "lane_audit",
+      "label": "Real Estate Appraisal\n(Collateral Track 1)",
+      "col": 5,
+      "track": 1
+    },
+    {
+      "id": "t_guar",
+      "type": "task",
+      "task_type": "service",
+      "lane": "lane_audit",
+      "label": "Corporate Guarantor Audit\n(Collateral Track 2)",
+      "col": 5,
+      "track": 2
+    },
+    {
+      "id": "or_join",
+      "type": "gateway_or",
+      "lane": "lane_audit",
+      "label": "",
+      "col": 6,
+      "track": 1
+    },
+    {
+      "id": "and_join",
+      "type": "gateway_and",
+      "lane": "lane_audit",
+      "label": "",
+      "col": 6,
+      "track": 0
+    },
+    {
+      "id": "xor_eval",
+      "type": "gateway_xor",
+      "lane": "lane_branch",
+      "label": "Risk Tier?",
+      "col": 7,
+      "track": 1
+    },
+    {
+      "id": "t_rework",
+      "type": "task",
+      "task_type": "service",
+      "lane": "lane_branch",
+      "label": "Request Additional Documents\n(Trigger Rework Loop)",
+      "col": 7,
+      "track": 0,
+      "fill": "#FEF3C7",
+      "stroke": "#D97706"
+    },
+    {
+      "id": "t_low_app",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_branch",
+      "label": "Standard Manager Approval\n(Low Risk)",
+      "col": 8,
+      "track": 0,
+      "fill": "#DCFCE7",
+      "stroke": "#16A34A"
+    },
+    {
+      "id": "t_rej",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_branch",
+      "label": "Reject Loan\n(Critical Risk)",
+      "col": 8,
+      "track": 1,
+      "fill": "#FEE2E2",
+      "stroke": "#DC2626"
+    },
+    {
+      "id": "t_escalate",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_branch",
+      "label": "Escalate to Senior Board\n(High Risk / Jumbo)",
+      "col": 8,
+      "track": 2,
+      "fill": "#EDE9FE",
+      "stroke": "#7C3AED"
+    },
+    {
+      "id": "end_app_tier1",
+      "type": "end_event",
+      "lane": "lane_branch",
+      "label": "Approved",
+      "col": 9,
+      "track": 0
+    },
+    {
+      "id": "end_rej_tier1",
+      "type": "end_event",
+      "lane": "lane_branch",
+      "label": "Rejected",
+      "col": 9,
+      "track": 1
+    },
+    {
+      "id": "t_comm_rev",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_executive",
+      "label": "Senior Committee Review\n(Mandatory Governance)",
+      "col": 9,
+      "track": 0
+    },
+    {
+      "id": "xor_comm",
+      "type": "gateway_xor",
+      "lane": "lane_executive",
+      "label": "Vote?",
+      "col": 10,
+      "track": 0
+    },
+    {
+      "id": "t_comm_app",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_executive",
+      "label": "Committee Approve Loan",
+      "col": 11,
+      "track": 0,
+      "fill": "#DCFCE7",
+      "stroke": "#16A34A"
+    },
+    {
+      "id": "t_comm_rej",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_executive",
+      "label": "Committee Reject Loan",
+      "col": 11,
+      "track": 1,
+      "fill": "#FEE2E2",
+      "stroke": "#DC2626"
+    },
+    {
+      "id": "end_app_tier2",
+      "type": "end_event",
+      "lane": "lane_executive",
+      "label": "Disbursed",
+      "col": 12,
+      "track": 0
+    },
+    {
+      "id": "end_rej_tier2",
+      "type": "end_event",
+      "lane": "lane_executive",
+      "label": "Closed",
+      "col": 12,
+      "track": 1
+    }
+  ],
+  "flow_edges": [
+    {
+      "from": "p_start",
+      "to": "p_submit"
+    },
+    {
+      "from": "p_receive",
+      "to": "p_end"
+    },
+    {
+      "from": "p_submit",
+      "to": "t_recv",
+      "dashed": true
+    },
+    {
+      "from": "t_recv",
+      "to": "t_broker_vet"
+    },
+    {
+      "from": "t_broker_vet",
+      "to": "and_split"
+    },
+    {
+      "from": "and_split",
+      "to": "t_credit"
+    },
+    {
+      "from": "and_split",
+      "to": "or_split"
+    },
+    {
+      "from": "or_split",
+      "to": "t_prop",
+      "label": "Property"
+    },
+    {
+      "from": "or_split",
+      "to": "t_guar",
+      "label": "Guarantor"
+    },
+    {
+      "from": "t_prop",
+      "to": "or_join"
+    },
+    {
+      "from": "t_guar",
+      "to": "or_join"
+    },
+    {
+      "from": "t_credit",
+      "to": "and_join"
+    },
+    {
+      "from": "or_join",
+      "to": "and_join"
+    },
+    {
+      "from": "and_join",
+      "to": "xor_eval"
+    },
+    {
+      "from": "xor_eval",
+      "to": "t_rework",
+      "label": "Incomplete"
+    },
+    {
+      "from": "t_rework",
+      "to": "p_resubmit",
+      "dashed": true
+    },
+    {
+      "from": "p_resubmit",
+      "to": "xor_eval",
+      "dashed": true
+    },
+    {
+      "from": "xor_eval",
+      "to": "t_low_app",
+      "label": "Low Risk"
+    },
+    {
+      "from": "xor_eval",
+      "to": "t_rej",
+      "label": "Critical Risk"
+    },
+    {
+      "from": "xor_eval",
+      "to": "t_escalate",
+      "label": "Jumbo Loan"
+    },
+    {
+      "from": "t_low_app",
+      "to": "end_app_tier1"
+    },
+    {
+      "from": "t_rej",
+      "to": "end_rej_tier1"
+    },
+    {
+      "from": "t_escalate",
+      "to": "t_comm_rev"
+    },
+    {
+      "from": "t_comm_rev",
+      "to": "xor_comm"
+    },
+    {
+      "from": "xor_comm",
+      "to": "t_comm_app",
+      "label": "Approved"
+    },
+    {
+      "from": "xor_comm",
+      "to": "t_comm_rej",
+      "label": "Rejected"
+    },
+    {
+      "from": "t_comm_app",
+      "to": "end_app_tier2"
+    },
+    {
+      "from": "t_comm_rej",
+      "to": "end_rej_tier2"
+    },
+    {
+      "from": "t_comm_app",
+      "to": "p_receive",
+      "dashed": true
+    }
+  ],
+  "petri_net_spec": {
+    "places": [
+      {
+        "id": "p_start",
+        "label": "p_start (Application Submitted)",
+        "initial_tokens": 1,
+        "lane": "Lane 1: Relationship Manager"
+      },
+      {
+        "id": "p_split",
+        "label": "p_split (Ready for Parallel Vetting)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_cred_wait",
+        "label": "p_cred_wait (Awaiting Credit Risk Check)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_cred_done",
+        "label": "p_cred_done (Credit Check Finished)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_sec_wait",
+        "label": "p_sec_wait (Awaiting Security Evaluation)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_prop_wait",
+        "label": "p_prop_wait (Awaiting Property Appraisal)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_guar_wait",
+        "label": "p_guar_wait (Awaiting Guarantor Audit)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_prop_skip",
+        "label": "p_prop_skip (Property Appraisal Not Required)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_guar_skip",
+        "label": "p_guar_skip (Guarantor Audit Not Required)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_prop_done",
+        "label": "p_prop_done (Property Appraisal Finished)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_guar_done",
+        "label": "p_guar_done (Guarantor Audit Finished)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_sec_done",
+        "label": "p_sec_done (Security Clearance Complete)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      {
+        "id": "p_evaluated",
+        "label": "p_evaluated (Audits Synchronized / Risk Evaluation)",
+        "initial_tokens": 0,
+        "lane": "Lane 3: Branch Committee"
+      },
+      {
+        "id": "p_rework",
+        "label": "p_rework (Additional Documents Requested)",
+        "initial_tokens": 0,
+        "lane": "Lane 1: Relationship Manager"
+      },
+      {
+        "id": "p_escalated",
+        "label": "p_escalated (Escalated to Committee)",
+        "initial_tokens": 0,
+        "lane": "Lane 4: Senior Committee"
+      },
+      {
+        "id": "p_comm_vetted",
+        "label": "p_comm_vetted (Senior Committee Review Completed)",
+        "initial_tokens": 0,
+        "lane": "Lane 4: Senior Committee"
+      },
+      {
+        "id": "p_end",
+        "label": "p_end (Process Terminated)",
+        "initial_tokens": 0,
+        "lane": "Lane 4: Senior Committee"
+      }
+    ],
+    "transitions": {
+      "t_submit": {
+        "label": "Submit Application",
+        "inputs": [
+          "p_start"
+        ],
+        "outputs": [
+          "p_split"
+        ],
+        "type": "standard",
+        "lane": "Lane 1: Relationship Manager"
+      },
+      "t_and_split": {
+        "label": "AND-Split (Fork Concurrency)",
+        "inputs": [
+          "p_split"
+        ],
+        "outputs": [
+          "p_cred_wait",
+          "p_sec_wait"
+        ],
+        "type": "gateway",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_credit": {
+        "label": "Credit Risk Assessment",
+        "inputs": [
+          "p_cred_wait"
+        ],
+        "outputs": [
+          "p_cred_done"
+        ],
+        "type": "prerequisite",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_or_prop": {
+        "label": "OR-Split: Property Collateral Only",
+        "inputs": [
+          "p_sec_wait"
+        ],
+        "outputs": [
+          "p_prop_wait",
+          "p_guar_skip"
+        ],
+        "type": "gateway",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_or_guar": {
+        "label": "OR-Split: Corporate Guarantor Only",
+        "inputs": [
+          "p_sec_wait"
+        ],
+        "outputs": [
+          "p_guar_wait",
+          "p_prop_skip"
+        ],
+        "type": "gateway",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_or_both": {
+        "label": "OR-Split: Both Collateral & Guarantor",
+        "inputs": [
+          "p_sec_wait"
+        ],
+        "outputs": [
+          "p_prop_wait",
+          "p_guar_wait"
+        ],
+        "type": "gateway",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_prop_appraisal": {
+        "label": "Real Estate Asset Appraisal",
+        "inputs": [
+          "p_prop_wait"
+        ],
+        "outputs": [
+          "p_prop_done"
+        ],
+        "type": "prerequisite",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_guar_audit": {
+        "label": "Corporate Guarantor Audit",
+        "inputs": [
+          "p_guar_wait"
+        ],
+        "outputs": [
+          "p_guar_done"
+        ],
+        "type": "prerequisite",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_or_join_prop": {
+        "label": "OR-Join: Property Synchronized",
+        "inputs": [
+          "p_prop_done",
+          "p_guar_skip"
+        ],
+        "outputs": [
+          "p_sec_done"
+        ],
+        "type": "gateway",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_or_join_guar": {
+        "label": "OR-Join: Guarantor Synchronized",
+        "inputs": [
+          "p_guar_done",
+          "p_prop_skip"
+        ],
+        "outputs": [
+          "p_sec_done"
+        ],
+        "type": "gateway",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_or_join_both": {
+        "label": "OR-Join: Both Synchronized",
+        "inputs": [
+          "p_prop_done",
+          "p_guar_done"
+        ],
+        "outputs": [
+          "p_sec_done"
+        ],
+        "type": "gateway",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_and_join": {
+        "label": "AND-Join (Synchronize Audits)",
+        "inputs": [
+          "p_cred_done",
+          "p_sec_done"
+        ],
+        "outputs": [
+          "p_evaluated"
+        ],
+        "type": "gateway",
+        "lane": "Lane 2: Technical Audit Group"
+      },
+      "t_low_app": {
+        "label": "Standard Manager Approval",
+        "inputs": [
+          "p_evaluated"
+        ],
+        "outputs": [
+          "p_end"
+        ],
+        "type": "decision",
+        "lane": "Lane 3: Branch Committee"
+      },
+      "t_direct_rej": {
+        "label": "Reject Loan",
+        "inputs": [
+          "p_evaluated"
+        ],
+        "outputs": [
+          "p_end"
+        ],
+        "type": "decision",
+        "lane": "Lane 3: Branch Committee"
+      },
+      "t_req_docs": {
+        "label": "Request Additional Documents (Rework)",
+        "inputs": [
+          "p_evaluated"
+        ],
+        "outputs": [
+          "p_rework"
+        ],
+        "type": "standard",
+        "lane": "Lane 3: Branch Committee"
+      },
+      "t_resubmit": {
+        "label": "Resubmit Updated Documents",
+        "inputs": [
+          "p_rework"
+        ],
+        "outputs": [
+          "p_evaluated"
+        ],
+        "type": "standard",
+        "lane": "Lane 1: Relationship Manager"
+      },
+      "t_escalate": {
+        "label": "Escalate to Senior Risk Committee",
+        "inputs": [
+          "p_evaluated"
+        ],
+        "outputs": [
+          "p_escalated"
+        ],
+        "type": "standard",
+        "lane": "Lane 3: Branch Committee"
+      },
+      "t_comm_rev": {
+        "label": "Senior Committee Review",
+        "inputs": [
+          "p_escalated"
+        ],
+        "outputs": [
+          "p_comm_vetted"
+        ],
+        "type": "prerequisite",
+        "lane": "Lane 4: Senior Committee"
+      },
+      "t_comm_app": {
+        "label": "Committee Approve Loan",
+        "inputs": [
+          "p_comm_vetted"
+        ],
+        "outputs": [
+          "p_end"
+        ],
+        "type": "decision",
+        "lane": "Lane 4: Senior Committee"
+      },
+      "t_comm_rej": {
+        "label": "Committee Reject Loan",
+        "inputs": [
+          "p_comm_vetted"
+        ],
+        "outputs": [
+          "p_end"
+        ],
+        "type": "decision",
+        "lane": "Lane 4: Senior Committee"
+      }
+    },
+    "initial_marking": {
+      "p_start": 1,
+      "p_split": 0,
+      "p_cred_wait": 0,
+      "p_cred_done": 0,
+      "p_sec_wait": 0,
+      "p_prop_wait": 0,
+      "p_guar_wait": 0,
+      "p_prop_skip": 0,
+      "p_guar_skip": 0,
+      "p_prop_done": 0,
+      "p_guar_done": 0,
+      "p_sec_done": 0,
+      "p_evaluated": 0,
+      "p_rework": 0,
+      "p_escalated": 0,
+      "p_comm_vetted": 0,
+      "p_end": 0
+    },
+    "final_place": "p_end"
+  }
+}

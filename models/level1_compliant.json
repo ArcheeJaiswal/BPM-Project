@@ -1,0 +1,271 @@
+{
+  "model_id": "level1_compliant",
+  "title": "Level 1: Basic Loan Approval",
+  "variant": "compliant",
+  "domain": "Retail Banking (Standard Personal Loan)",
+  "architecture_summary": "Sequential Control-Flow with Exclusive (XOR) Decision Gateway",
+  "concurrency_degree": "1 Token (Sequential / Safe WF-Net)",
+  "compliance_rule": {
+    "text": "A loan must not be approved without a preceding credit check.",
+    "rule_spec": {
+      "prerequisite": "Credit Check",
+      "target": "Approve Loan"
+    }
+  },
+  "pools": {
+    "top_pool": {
+      "title": "\ud83c\udfca Pool: Customer / Borrower Portal",
+      "nodes": [
+        {
+          "id": "p_start",
+          "type": "start_event",
+          "label": "Start",
+          "col": 0
+        },
+        {
+          "id": "p_submit",
+          "type": "task",
+          "task_type": "user",
+          "label": "Access Portal &\nSubmit Application",
+          "col": 1
+        },
+        {
+          "id": "p_receive",
+          "type": "task",
+          "task_type": "receive",
+          "label": "Receive Official\nDecision Letter",
+          "col": 5
+        },
+        {
+          "id": "p_end",
+          "type": "end_event",
+          "label": "Completed",
+          "col": 6
+        }
+      ]
+    },
+    "primary_pool": {
+      "title": "\ud83c\udfe6 Pool: Commercial Lending Institution (Single-Tier Process)",
+      "lanes": [
+        {
+          "id": "lane_intake",
+          "name": "Front-Office Desk",
+          "bg": "#EFF6FF"
+        },
+        {
+          "id": "lane_risk",
+          "name": "Credit & Risk Dept",
+          "bg": "#FEFCE8"
+        },
+        {
+          "id": "lane_officer",
+          "name": "Loan Officer",
+          "bg": "#FAF5FF"
+        }
+      ]
+    }
+  },
+  "flow_nodes": [
+    {
+      "id": "t_recv",
+      "type": "task",
+      "task_type": "service",
+      "lane": "lane_intake",
+      "label": "Receive Application &\nCreate Loan Dossier",
+      "col": 1
+    },
+    {
+      "id": "xor_split",
+      "type": "gateway_xor",
+      "lane": "lane_intake",
+      "label": "",
+      "col": 2
+    },
+    {
+      "id": "t_check",
+      "type": "task",
+      "task_type": "service",
+      "lane": "lane_risk",
+      "label": "Mandatory Credit Check\n(Prerequisite)",
+      "col": 3,
+      "fill": "#EFF6FF",
+      "stroke": "#2563EB"
+    },
+    {
+      "id": "xor_dec",
+      "type": "gateway_xor",
+      "lane": "lane_officer",
+      "label": "Eligible?",
+      "col": 4
+    },
+    {
+      "id": "t_app",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_officer",
+      "label": "Loan Officer\nApprove Loan",
+      "col": 5,
+      "track": 0,
+      "fill": "#DCFCE7",
+      "stroke": "#16A34A"
+    },
+    {
+      "id": "t_rej",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_officer",
+      "label": "Loan Officer\nReject Loan",
+      "col": 5,
+      "track": 1,
+      "fill": "#FEE2E2",
+      "stroke": "#DC2626"
+    },
+    {
+      "id": "end_app",
+      "type": "end_event",
+      "lane": "lane_officer",
+      "label": "Approved",
+      "col": 6,
+      "track": 0
+    },
+    {
+      "id": "end_rej",
+      "type": "end_event",
+      "lane": "lane_officer",
+      "label": "Rejected",
+      "col": 6,
+      "track": 1
+    }
+  ],
+  "flow_edges": [
+    {
+      "from": "p_start",
+      "to": "p_submit"
+    },
+    {
+      "from": "p_receive",
+      "to": "p_end"
+    },
+    {
+      "from": "p_submit",
+      "to": "t_recv",
+      "dashed": true
+    },
+    {
+      "from": "t_recv",
+      "to": "xor_split"
+    },
+    {
+      "from": "xor_split",
+      "to": "t_check"
+    },
+    {
+      "from": "t_check",
+      "to": "xor_dec"
+    },
+    {
+      "from": "xor_dec",
+      "to": "t_app",
+      "label": "Eligible"
+    },
+    {
+      "from": "xor_dec",
+      "to": "t_rej",
+      "label": "Ineligible"
+    },
+    {
+      "from": "t_app",
+      "to": "end_app"
+    },
+    {
+      "from": "t_rej",
+      "to": "end_rej"
+    },
+    {
+      "from": "t_app",
+      "to": "p_receive",
+      "dashed": true
+    }
+  ],
+  "petri_net_spec": {
+    "places": [
+      {
+        "id": "p_start",
+        "label": "p_start (Application Submitted)",
+        "initial_tokens": 1,
+        "lane": "Lane 1: Front-Office Desk"
+      },
+      {
+        "id": "p_received",
+        "label": "p_received (Awaiting Credit Check)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Credit & Risk Dept"
+      },
+      {
+        "id": "p_checked",
+        "label": "p_checked (Credit Check Complete)",
+        "initial_tokens": 0,
+        "lane": "Lane 3: Loan Officer"
+      },
+      {
+        "id": "p_end",
+        "label": "p_end (Process Terminated)",
+        "initial_tokens": 0,
+        "lane": "Lane 3: Loan Officer"
+      }
+    ],
+    "transitions": {
+      "t_recv": {
+        "label": "Submit Application",
+        "inputs": [
+          "p_start"
+        ],
+        "outputs": [
+          "p_received"
+        ],
+        "type": "standard",
+        "lane": "Lane 1: Front-Office Desk"
+      },
+      "t_check": {
+        "label": "Credit Check",
+        "inputs": [
+          "p_received"
+        ],
+        "outputs": [
+          "p_checked"
+        ],
+        "type": "prerequisite",
+        "lane": "Lane 2: Credit & Risk Dept"
+      },
+      "t_app": {
+        "label": "Approve Loan",
+        "inputs": [
+          "p_checked"
+        ],
+        "outputs": [
+          "p_end"
+        ],
+        "type": "decision",
+        "lane": "Lane 3: Loan Officer"
+      },
+      "t_rej": {
+        "label": "Reject Loan",
+        "inputs": [
+          "p_checked"
+        ],
+        "outputs": [
+          "p_end"
+        ],
+        "type": "decision",
+        "lane": "Lane 3: Loan Officer"
+      }
+    },
+    "initial_marking": {
+      "p_start": 1,
+      "p_received": 0,
+      "p_checked": 0,
+      "p_end": 0
+    },
+    "final_place": "p_end"
+  }
+}

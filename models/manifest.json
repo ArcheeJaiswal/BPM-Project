@@ -1,0 +1,62 @@
+[
+  {
+    "model_key": "level1_compliant",
+    "description": "Basic Sequential + Exclusive XOR (Compliant)",
+    "files": {
+      "bpmn_xml": "dataset/level1_compliant.bpmn",
+      "svg_diagram": "dataset/level1_compliant.svg",
+      "json_spec": "dataset/level1_compliant.json",
+      "pnml_petri_net": "dataset/level1_compliant.pnml"
+    }
+  },
+  {
+    "model_key": "level1_violating",
+    "description": "Basic Sequential + Exclusive XOR with Credit Check Bypass (Violation)",
+    "files": {
+      "bpmn_xml": "dataset/level1_violating.bpmn",
+      "svg_diagram": "dataset/level1_violating.svg",
+      "json_spec": "dataset/level1_violating.json",
+      "pnml_petri_net": "dataset/level1_violating.pnml"
+    }
+  },
+  {
+    "model_key": "level2_compliant",
+    "description": "Medium Parallel Concurrency AND-Split/Join (Compliant)",
+    "files": {
+      "bpmn_xml": "dataset/level2_compliant.bpmn",
+      "svg_diagram": "dataset/level2_compliant.svg",
+      "json_spec": "dataset/level2_compliant.json",
+      "pnml_petri_net": "dataset/level2_compliant.pnml"
+    }
+  },
+  {
+    "model_key": "level2_violating",
+    "description": "Medium Parallel Concurrency with Premature Approval (Violation)",
+    "files": {
+      "bpmn_xml": "dataset/level2_violating.bpmn",
+      "svg_diagram": "dataset/level2_violating.svg",
+      "json_spec": "dataset/level2_violating.json",
+      "pnml_petri_net": "dataset/level2_violating.pnml"
+    }
+  },
+  {
+    "model_key": "level3_compliant",
+    "description": "Advanced Enterprise Multi-Gateway AND/OR/XOR & Rework Loop (Compliant)",
+    "files": {
+      "bpmn_xml": "dataset/level3_compliant.bpmn",
+      "svg_diagram": "dataset/level3_compliant.svg",
+      "json_spec": "dataset/level3_compliant.json",
+      "pnml_petri_net": "dataset/level3_compliant.pnml"
+    }
+  },
+  {
+    "model_key": "level3_violating",
+    "description": "Advanced Enterprise Multi-Gateway with Executive Board Bypass (Violation)",
+    "files": {
+      "bpmn_xml": "dataset/level3_violating.bpmn",
+      "svg_diagram": "dataset/level3_violating.svg",
+      "json_spec": "dataset/level3_violating.json",
+      "pnml_petri_net": "dataset/level3_violating.pnml"
+    }
+  }
+]

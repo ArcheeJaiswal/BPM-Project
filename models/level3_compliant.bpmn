@@ -1,0 +1,99 @@
+<?xml version="1.0" ?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_level3_compliant" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Compliance Verification Studio BPMN 2.0 Engine">
+  <bpmn:collaboration id="Collaboration_level3">
+    <bpmn:participant id="Participant_Portal" name="Customer / Borrower Portal" processRef="Process_level3_Portal"/>
+    <bpmn:participant id="Participant_Bank" name="🏦 Pool: Corporate Loan Provider (Multi-Tier Financial Institution)" processRef="Process_level3_Bank"/>
+    <bpmn:messageFlow id="MsgFlow_1" sourceRef="p_submit" targetRef="t_recv"/>
+    <bpmn:messageFlow id="MsgFlow_2" sourceRef="t_rework" targetRef="p_resubmit"/>
+    <bpmn:messageFlow id="MsgFlow_3" sourceRef="p_resubmit" targetRef="xor_eval"/>
+    <bpmn:messageFlow id="MsgFlow_4" sourceRef="t_comm_app" targetRef="p_receive"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_level3_Portal" isExecutable="false">
+    <bpmn:startEvent id="p_start" name="Start"/>
+    <bpmn:userTask id="p_submit" name="Submit Syndicated Loan Request"/>
+    <bpmn:userTask id="p_resubmit" name="Upload Requested Disclosures"/>
+    <bpmn:receiveTask id="p_receive" name="Receive Official Decision Letter"/>
+    <bpmn:endEvent id="p_end" name="Completed"/>
+  </bpmn:process>
+  <bpmn:process id="Process_level3_Bank" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_level3">
+      <bpmn:lane id="lane_broker" name="Commercial Credit Broker">
+        <bpmn:flowNodeRef>t_recv</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_broker_vet</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_audit" name="Technical &amp; Collateral Audit">
+        <bpmn:flowNodeRef>and_split</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_credit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>or_split</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_prop</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_guar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>or_join</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>and_join</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_branch" name="Branch Credit Committee">
+        <bpmn:flowNodeRef>xor_eval</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_rework</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_low_app</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_rej</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_escalate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_app_tier1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_rej_tier1</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_executive" name="Senior Committee &amp; Board">
+        <bpmn:flowNodeRef>t_comm_rev</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>xor_comm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_comm_app</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_comm_rej</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_app_tier2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_rej_tier2</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:serviceTask id="t_recv" name="Receive Application &amp; Create Loan Dossier"/>
+    <bpmn:userTask id="t_broker_vet" name="Check Customer Standing &amp; Privileges"/>
+    <bpmn:parallelGateway id="and_split" name=""/>
+    <bpmn:serviceTask id="t_credit" name="Mandatory Credit Risk Assessment"/>
+    <bpmn:inclusiveGateway id="or_split" name="Collateral?"/>
+    <bpmn:serviceTask id="t_prop" name="Real Estate Appraisal (Collateral Track 1)"/>
+    <bpmn:serviceTask id="t_guar" name="Corporate Guarantor Audit (Collateral Track 2)"/>
+    <bpmn:inclusiveGateway id="or_join" name=""/>
+    <bpmn:parallelGateway id="and_join" name=""/>
+    <bpmn:exclusiveGateway id="xor_eval" name="Risk Tier?"/>
+    <bpmn:serviceTask id="t_rework" name="Request Additional Documents (Trigger Rework Loop)"/>
+    <bpmn:userTask id="t_low_app" name="Standard Manager Approval (Low Risk)"/>
+    <bpmn:userTask id="t_rej" name="Reject Loan (Critical Risk)"/>
+    <bpmn:userTask id="t_escalate" name="Escalate to Senior Board (High Risk / Jumbo)"/>
+    <bpmn:endEvent id="end_app_tier1" name="Approved"/>
+    <bpmn:endEvent id="end_rej_tier1" name="Rejected"/>
+    <bpmn:userTask id="t_comm_rev" name="Senior Committee Review (Mandatory Governance)"/>
+    <bpmn:exclusiveGateway id="xor_comm" name="Vote?"/>
+    <bpmn:userTask id="t_comm_app" name="Committee Approve Loan"/>
+    <bpmn:userTask id="t_comm_rej" name="Committee Reject Loan"/>
+    <bpmn:endEvent id="end_app_tier2" name="Disbursed"/>
+    <bpmn:endEvent id="end_rej_tier2" name="Closed"/>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="p_start" targetRef="p_submit"/>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="p_receive" targetRef="p_end"/>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="t_recv" targetRef="t_broker_vet"/>
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="t_broker_vet" targetRef="and_split"/>
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="and_split" targetRef="t_credit"/>
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="and_split" targetRef="or_split"/>
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="or_split" targetRef="t_prop" name="Property"/>
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="or_split" targetRef="t_guar" name="Guarantor"/>
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="t_prop" targetRef="or_join"/>
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="t_guar" targetRef="or_join"/>
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="t_credit" targetRef="and_join"/>
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="or_join" targetRef="and_join"/>
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="and_join" targetRef="xor_eval"/>
+    <bpmn:sequenceFlow id="Flow_14" sourceRef="xor_eval" targetRef="t_rework" name="Incomplete"/>
+    <bpmn:sequenceFlow id="Flow_15" sourceRef="xor_eval" targetRef="t_low_app" name="Low Risk"/>
+    <bpmn:sequenceFlow id="Flow_16" sourceRef="xor_eval" targetRef="t_rej" name="Critical Risk"/>
+    <bpmn:sequenceFlow id="Flow_17" sourceRef="xor_eval" targetRef="t_escalate" name="Jumbo Loan"/>
+    <bpmn:sequenceFlow id="Flow_18" sourceRef="t_low_app" targetRef="end_app_tier1"/>
+    <bpmn:sequenceFlow id="Flow_19" sourceRef="t_rej" targetRef="end_rej_tier1"/>
+    <bpmn:sequenceFlow id="Flow_20" sourceRef="t_escalate" targetRef="t_comm_rev"/>
+    <bpmn:sequenceFlow id="Flow_21" sourceRef="t_comm_rev" targetRef="xor_comm"/>
+    <bpmn:sequenceFlow id="Flow_22" sourceRef="xor_comm" targetRef="t_comm_app" name="Approved"/>
+    <bpmn:sequenceFlow id="Flow_23" sourceRef="xor_comm" targetRef="t_comm_rej" name="Rejected"/>
+    <bpmn:sequenceFlow id="Flow_24" sourceRef="t_comm_app" targetRef="end_app_tier2"/>
+    <bpmn:sequenceFlow id="Flow_25" sourceRef="t_comm_rej" targetRef="end_rej_tier2"/>
+  </bpmn:process>
+</bpmn:definitions>

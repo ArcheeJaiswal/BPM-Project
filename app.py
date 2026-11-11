@@ -15,6 +15,7 @@ Modular Architecture:
 ========================================================================================
 """
 
+import os
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -212,6 +213,39 @@ st.markdown(f"""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
+# Active Input Dataset File & Format Inspector
+active_prefix = f"{st.session_state.active_complexity_key}_{st.session_state.active_variant}"
+bpmn_path = f"dataset/{active_prefix}.bpmn"
+pnml_path = f"dataset/{active_prefix}.pnml"
+json_path = f"dataset/{active_prefix}.json"
+
+st.markdown(f"""
+<div style="background-color: #F8FAFC; border: 1.2px solid #CBD5E1; border-radius: 6px; padding: 7px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 0.83rem;">
+    <div>
+        📂 <strong>Input Dataset File:</strong> <code style="color: #1E3A8A; font-weight: 700; background: #EEF2F6; padding: 2px 6px; border-radius: 4px;">dataset/{active_prefix}.bpmn</code> &nbsp;|&nbsp; 
+        <span>Status: <strong style="color: #15803D;">🟢 Loaded & Parsed into Execution Net</strong></span>
+    </div>
+    <div style="font-size: 0.78rem; color: #475569;">
+        Format Standards: <strong>BPMN 2.0 XML &bull; ISO PNML &bull; JSON Schema</strong>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+with st.expander("🔍 View Raw Input Model Source (BPMN 2.0 XML / Petri Net PNML / JSON)", expanded=False):
+    t_bpmn, t_pnml, t_json = st.tabs(["📄 BPMN 2.0 XML Source", "⚙️ Petri Net (PNML XML)", "📋 JSON Process Schema"])
+    with t_bpmn:
+        if os.path.exists(bpmn_path):
+            with open(bpmn_path, "r", encoding="utf-8") as f:
+                st.code(f.read(), language="xml")
+    with t_pnml:
+        if os.path.exists(pnml_path):
+            with open(pnml_path, "r", encoding="utf-8") as f:
+                st.code(f.read(), language="xml")
+    with t_json:
+        if os.path.exists(json_path):
+            with open(json_path, "r", encoding="utf-8") as f:
+                st.code(f.read(), language="json")
 
 st.caption("Displaying publication-grade BPMN 2.0 organizational swimlanes with left vertical headers and orthogonal obstacle-avoiding routing.")
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_level2_violating" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Compliance Verification Studio BPMN 2.0 Engine">
+  <bpmn:collaboration id="Collaboration_level2">
+    <bpmn:participant id="Participant_Portal" name="Customer / Borrower Portal" processRef="Process_level2_Portal"/>
+    <bpmn:participant id="Participant_Bank" name="🏦 Pool: Commercial Bank (Dual-Audit Concurrency)" processRef="Process_level2_Bank"/>
+    <bpmn:messageFlow id="MsgFlow_1" sourceRef="p_submit" targetRef="t_recv"/>
+    <bpmn:messageFlow id="MsgFlow_2" sourceRef="t_app" targetRef="p_receive"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_level2_Portal" isExecutable="false">
+    <bpmn:startEvent id="p_start" name="Start"/>
+    <bpmn:userTask id="p_submit" name="Access Portal &amp; Submit Commercial File"/>
+    <bpmn:receiveTask id="p_receive" name="Receive Official Decision Letter"/>
+    <bpmn:endEvent id="p_end" name="Completed"/>
+  </bpmn:process>
+  <bpmn:process id="Process_level2_Bank" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_level2">
+      <bpmn:lane id="lane_intake" name="Commercial Intake">
+        <bpmn:flowNodeRef>t_recv</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_audit" name="Technical &amp; Collateral Audit">
+        <bpmn:flowNodeRef>and_split</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_check</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_collateral</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>and_join</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="lane_manager" name="Branch Underwriting">
+        <bpmn:flowNodeRef>xor_eval</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_app</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>t_rej</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_app</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_rej</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:serviceTask id="t_recv" name="Commercial Intake &amp; Create Loan Dossier"/>
+    <bpmn:parallelGateway id="and_split" name=""/>
+    <bpmn:serviceTask id="t_check" name="Mandatory Credit Risk Assessment"/>
+    <bpmn:serviceTask id="t_collateral" name="Collateral Valuation &amp; Asset Vetting"/>
+    <bpmn:parallelGateway id="and_join" name=""/>
+    <bpmn:exclusiveGateway id="xor_eval" name="Low Risk?"/>
+    <bpmn:userTask id="t_app" name="Branch Manager Approve Loan"/>
+    <bpmn:userTask id="t_rej" name="Branch Manager Reject Loan"/>
+    <bpmn:endEvent id="end_app" name="Approved"/>
+    <bpmn:endEvent id="end_rej" name="Rejected"/>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="p_start" targetRef="p_submit"/>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="p_receive" targetRef="p_end"/>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="t_recv" targetRef="and_split"/>
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="and_split" targetRef="t_check"/>
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="and_split" targetRef="t_collateral"/>
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="t_check" targetRef="and_join"/>
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="t_collateral" targetRef="and_join"/>
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="and_join" targetRef="xor_eval"/>
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="xor_eval" targetRef="t_app" name="Approved"/>
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="xor_eval" targetRef="t_rej" name="Rejected"/>
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="t_app" targetRef="end_app"/>
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="t_rej" targetRef="end_rej"/>
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="t_collateral" targetRef="t_app" name="⚠️ Skip Credit Assessment" xsi:type="bpmn:tViolationFlow"/>
+  </bpmn:process>
+</bpmn:definitions>

@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+  <net id="net_level1_violating" type="http://www.pnml.org/version-2009/grammar/ptnet">
+    <name>
+      <text>Level 1: Basic Loan Approval - Violating Variant</text>
+    </name>
+    <page id="page_0">
+      <place id="p_start">
+        <name>
+          <text>p_start (Application Submitted)</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="p_received">
+        <name>
+          <text>p_received (Awaiting Decision/Check)</text>
+        </name>
+      </place>
+      <place id="p_checked">
+        <name>
+          <text>p_checked (Credit Check Complete)</text>
+        </name>
+      </place>
+      <place id="p_bypassed">
+        <name>
+          <text>p_bypassed (Check Skipped)</text>
+        </name>
+      </place>
+      <place id="p_end">
+        <name>
+          <text>p_end (Process Terminated)</text>
+        </name>
+      </place>
+      <transition id="t_recv">
+        <name>
+          <text>Submit Application</text>
+        </name>
+      </transition>
+      <transition id="t_check">
+        <name>
+          <text>Credit Check</text>
+        </name>
+      </transition>
+      <transition id="t_bypass">
+        <name>
+          <text>Bypass Credit Check</text>
+        </name>
+      </transition>
+      <transition id="t_app">
+        <name>
+          <text>Approve Loan</text>
+        </name>
+      </transition>
+      <transition id="t_rej">
+        <name>
+          <text>Reject Loan</text>
+        </name>
+      </transition>
+      <transition id="t_bypass_app">
+        <name>
+          <text>Approve Loan (Unchecked)</text>
+        </name>
+      </transition>
+      <arc id="arc_1" source="p_start" target="t_recv">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_2" source="t_recv" target="p_received">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_3" source="p_received" target="t_check">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_4" source="t_check" target="p_checked">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_5" source="p_received" target="t_bypass">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_6" source="t_bypass" target="p_bypassed">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_7" source="p_checked" target="t_app">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_8" source="t_app" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_9" source="p_checked" target="t_rej">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_10" source="t_rej" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_11" source="p_bypassed" target="t_bypass_app">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_12" source="t_bypass_app" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+    </page>
+  </net>
+</pnml>

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1437 627" width="1437" height="627" style="background-color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+<defs>
+  <marker id="sequence-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#1E293B" />
+  </marker>
+  <marker id="violation-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+    <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#DC2626" />
+  </marker>
+  <marker id="message-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#FFFFFF" stroke="#475569" stroke-width="1.3" />
+  </marker>
+  <marker id="message-circle" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <circle cx="5" cy="5" r="3.2" fill="#FFFFFF" stroke="#475569" stroke-width="1.3" />
+  </marker>
+</defs>
+<rect x="14" y="14" width="1409" height="95" fill="#F0FDF4" stroke="#16A34A" stroke-width="2" rx="4" />
+<rect x="14" y="14" width="88" height="95" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5" />
+<text x="-61.5" y="62.0" transform="rotate(-90)" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#166534" letter-spacing="0.4px">🏊 Pool: Customer / Borrower Portal</text>
+<rect x="14" y="127" width="1409" height="480" fill="#FFFFFF" stroke="#0F172A" stroke-width="2" rx="4" />
+<rect x="14" y="127" width="40" height="480" fill="#F1F5F9" stroke="#0F172A" stroke-width="1.5" />
+<text x="-367.0" y="38.0" transform="rotate(-90)" text-anchor="middle" font-size="12" font-weight="bold" fill="#0F172A" letter-spacing="0.5px">🏦 Pool: Commercial Bank (Dual-Audit Concurrency)</text>
+<rect x="102" y="127" width="1311" height="120" fill="#EFF6FF" stroke="none" />
+<rect x="54" y="127" width="48" height="120" fill="#FFFFFF" stroke="#334155" stroke-width="1.2" />
+<text x="-187.0" y="82.0" transform="rotate(-90)" text-anchor="middle" font-size="11" font-weight="600" fill="#1E293B">Commercial Intake</text>
+<rect x="102" y="247" width="1311" height="180" fill="#FEFCE8" stroke="none" />
+<rect x="54" y="247" width="48" height="180" fill="#FFFFFF" stroke="#334155" stroke-width="1.2" />
+<text x="-337.0" y="82.0" transform="rotate(-90)" text-anchor="middle" font-size="11" font-weight="600" fill="#1E293B">Technical &amp; Collateral Audit</text>
+<line x1="102" y1="247" x2="1413" y2="247" stroke="#334155" stroke-width="1.2" />
+<rect x="102" y="427" width="1311" height="180" fill="#FAF5FF" stroke="none" />
+<rect x="54" y="427" width="48" height="180" fill="#FFFFFF" stroke="#334155" stroke-width="1.2" />
+<text x="-517.0" y="82.0" transform="rotate(-90)" text-anchor="middle" font-size="11" font-weight="600" fill="#1E293B">Branch Underwriting</text>
+<line x1="102" y1="427" x2="1413" y2="427" stroke="#334155" stroke-width="1.2" />
+<path d="M 148.0 63.0 L 227.0 63.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+
+<path d="M 1187.0 63.0 L 1266.0 63.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+
+<path d="M 304.5 90.0 L 304.5 151.0" fill="none" stroke="#475569" stroke-width="1.4" stroke-dasharray="6,4" marker-start="url(#message-circle)" marker-end="url(#message-arrow)" />
+
+<path d="M 382.0 178.0 L 477.0 178.0 L 477.0 278.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+
+<path d="M 497.0 298.0 L 572.0 298.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+
+<path d="M 477.0 318.0 L 477.0 376.0 L 572.0 376.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+
+<path d="M 727.0 298.0 L 802.0 298.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+
+<path d="M 727.0 376.0 L 822.0 376.0 L 822.0 318.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+
+<path d="M 822.0 318.0 L 822.0 458.0 L 937.0 458.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+
+<path d="M 957.0 478.0 L 1032.0 478.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+<g>  <rect x="964.7" y="463.0" width="59.6" height="14" fill="#FFFFFF" rx="3" stroke="#CBD5E1" stroke-width="0.8" />  <text x="994.5" y="473.0" text-anchor="middle" font-size="8.5" font-weight="600" fill="#334155">Approved</text></g>
+<path d="M 937.0 498.0 L 937.0 556.0 L 1032.0 556.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+<g>  <rect x="954.7" y="541.0" width="59.6" height="14" fill="#FFFFFF" rx="3" stroke="#CBD5E1" stroke-width="0.8" />  <text x="984.5" y="551.0" text-anchor="middle" font-size="8.5" font-weight="600" fill="#334155">Rejected</text></g>
+<path d="M 1187.0 478.0 L 1266.0 478.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+
+<path d="M 1187.0 556.0 L 1266.0 556.0" fill="none" stroke="#1E293B" stroke-width="1.5"   marker-end="url(#sequence-arrow)" />
+
+<path d="M 1109.5 451.0 L 1109.5 90.0" fill="none" stroke="#475569" stroke-width="1.4" stroke-dasharray="6,4" marker-start="url(#message-circle)" marker-end="url(#message-arrow)" />
+
+<path d="M 727.0 376.0 L 764.5 376.0 L 764.5 331.0 L 994.5 331.0 L 994.5 478.0 L 1032.0 478.0" fill="none" stroke="#DC2626" stroke-width="2.0" stroke-dasharray="5,4"  marker-end="url(#violation-arrow)" />
+<g>  <rect x="806.3" y="316.0" width="146.4" height="14" fill="#FFFFFF" rx="3" stroke="#FCA5A5" stroke-width="0.8" />  <text x="879.5" y="326.0" text-anchor="middle" font-size="8.5" font-weight="600" fill="#DC2626">Skip Credit Assessment</text></g>
+<g id="node_t_recv">  <rect x="227.0" y="151.0" width="155" height="54" rx="5" ry="5" fill="#FFFFFF" stroke="#1E293B" stroke-width="1.5"  />  <g transform="translate(234.0, 157.0)" stroke="#475569" stroke-width="1.2" fill="none">  <circle cx="6" cy="6" r="3" />  <path d="M 6 1 L 6 3 M 6 9 L 6 11 M 1 6 L 3 6 M 9 6 L 11 6 M 2.5 2.5 L 3.9 3.9 M 8.1 8.1 L 9.5 9.5 M 2.5 9.5 L 3.9 8.1 M 8.1 3.9 L 9.5 2.5" /></g>  <text text-anchor="middle" font-size="10.5" font-weight="500" fill="#0F172A">    <tspan x="304.5" y="175.0">Commercial Intake &amp;</tspan><tspan x="304.5" y="189.0">Create Loan Dossier</tspan>  </text></g>
+<g id="node_and_split">  <polygon points="477.0,278.0 497.0,298.0 477.0,318.0 457.0,298.0" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.8" />  <text x="477.0" y="305.0" text-anchor="middle" font-size="22" font-weight="bold" fill="#1D4ED8">+</text>  </g>
+<g id="node_t_check">  <rect x="572.0" y="271.0" width="155" height="54" rx="5" ry="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5"  />  <g transform="translate(579.0, 277.0)" stroke="#475569" stroke-width="1.2" fill="none">  <circle cx="6" cy="6" r="3" />  <path d="M 6 1 L 6 3 M 6 9 L 6 11 M 1 6 L 3 6 M 9 6 L 11 6 M 2.5 2.5 L 3.9 3.9 M 8.1 8.1 L 9.5 9.5 M 2.5 9.5 L 3.9 8.1 M 8.1 3.9 L 9.5 2.5" /></g>  <text text-anchor="middle" font-size="10.5" font-weight="500" fill="#0F172A">    <tspan x="649.5" y="295.0">Mandatory Credit Risk</tspan><tspan x="649.5" y="309.0">Assessment</tspan>  </text></g>
+<g id="node_t_collateral">  <rect x="572.0" y="349.0" width="155" height="54" rx="5" ry="5" fill="#FFFFFF" stroke="#1E293B" stroke-width="1.5"  />  <g transform="translate(579.0, 355.0)" stroke="#475569" stroke-width="1.2" fill="none">  <circle cx="6" cy="6" r="3" />  <path d="M 6 1 L 6 3 M 6 9 L 6 11 M 1 6 L 3 6 M 9 6 L 11 6 M 2.5 2.5 L 3.9 3.9 M 8.1 8.1 L 9.5 9.5 M 2.5 9.5 L 3.9 8.1 M 8.1 3.9 L 9.5 2.5" /></g>  <text text-anchor="middle" font-size="10.5" font-weight="500" fill="#0F172A">    <tspan x="649.5" y="373.0">Collateral Valuation &amp;</tspan><tspan x="649.5" y="387.0">Asset Vetting</tspan>  </text></g>
+<g id="node_and_join">  <polygon points="822.0,278.0 842.0,298.0 822.0,318.0 802.0,298.0" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.8" />  <text x="822.0" y="305.0" text-anchor="middle" font-size="22" font-weight="bold" fill="#1D4ED8">+</text>  </g>
+<g id="node_xor_eval">  <polygon points="937.0,458.0 957.0,478.0 937.0,498.0 917.0,478.0" fill="#FEF08A" stroke="#CA8A04" stroke-width="1.8" />  <text x="937.0" y="484.5" text-anchor="middle" font-size="20" font-weight="bold" fill="#854D0E">×</text>  <text x="937.0" y="450.0" text-anchor="middle" font-size="10" font-weight="bold" fill="#1E293B">Low Risk?</text></g>
+<g id="node_t_app">  <rect x="1032.0" y="451.0" width="155" height="54" rx="5" ry="5" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"  />  <g transform="translate(1039.0, 457.0)" fill="#475569">  <circle cx="5" cy="4" r="2.2" />  <path d="M 1.5 12 C 1.5 9.2, 3 8, 5 8 C 7 8, 8.5 9.2, 8.5 12 Z" /></g>  <text text-anchor="middle" font-size="10.5" font-weight="500" fill="#0F172A">    <tspan x="1109.5" y="475.0">Branch Manager</tspan><tspan x="1109.5" y="489.0">Approve Loan</tspan>  </text></g>
+<g id="node_t_rej">  <rect x="1032.0" y="529.0" width="155" height="54" rx="5" ry="5" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"  />  <g transform="translate(1039.0, 535.0)" fill="#475569">  <circle cx="5" cy="4" r="2.2" />  <path d="M 1.5 12 C 1.5 9.2, 3 8, 5 8 C 7 8, 8.5 9.2, 8.5 12 Z" /></g>  <text text-anchor="middle" font-size="10.5" font-weight="500" fill="#0F172A">    <tspan x="1109.5" y="553.0">Branch Manager</tspan><tspan x="1109.5" y="567.0">Reject Loan</tspan>  </text></g>
+<g id="node_end_app">  <circle cx="1282.0" cy="478.0" r="16" fill="#FEE2E2" stroke="#DC2626" stroke-width="3.5" />  <text x="1282.0" y="507.0" text-anchor="middle" font-size="9.5" fill="#991B1B" font-weight="600">Approved</text></g>
+<g id="node_end_rej">  <circle cx="1282.0" cy="556.0" r="16" fill="#FEE2E2" stroke="#DC2626" stroke-width="3.5" />  <text x="1282.0" y="585.0" text-anchor="middle" font-size="9.5" fill="#991B1B" font-weight="600">Rejected</text></g>
+<g id="node_p_start">  <circle cx="132.0" cy="63.0" r="16" fill="#DCFCE7" stroke="#16A34A" stroke-width="2" />  <text x="132.0" y="92.0" text-anchor="middle" font-size="9.5" fill="#15803D" font-weight="600">Start</text></g>
+<g id="node_p_submit">  <rect x="227.0" y="36.0" width="155" height="54" rx="5" ry="5" fill="#FFFFFF" stroke="#1E293B" stroke-width="1.5"  />  <g transform="translate(234.0, 42.0)" fill="#475569">  <circle cx="5" cy="4" r="2.2" />  <path d="M 1.5 12 C 1.5 9.2, 3 8, 5 8 C 7 8, 8.5 9.2, 8.5 12 Z" /></g>  <text text-anchor="middle" font-size="10.5" font-weight="500" fill="#0F172A">    <tspan x="304.5" y="60.0">Access Portal &amp;</tspan><tspan x="304.5" y="74.0">Submit Commercial File</tspan>  </text></g>
+<g id="node_p_receive">  <rect x="1032.0" y="36.0" width="155" height="54" rx="5" ry="5" fill="#FFFFFF" stroke="#1E293B" stroke-width="1.5"  />  <g transform="translate(1039.0, 42.0)" stroke="#475569" stroke-width="1.2" fill="none">  <rect x="0" y="1.5" width="12" height="8" rx="1" />  <path d="M 0 2.5 L 6 6.5 L 12 2.5" /></g>  <text text-anchor="middle" font-size="10.5" font-weight="500" fill="#0F172A">    <tspan x="1109.5" y="60.0">Receive Official</tspan><tspan x="1109.5" y="74.0">Decision Letter</tspan>  </text></g>
+<g id="node_p_end">  <circle cx="1282.0" cy="63.0" r="16" fill="#FEE2E2" stroke="#DC2626" stroke-width="3.5" />  <text x="1282.0" y="92.0" text-anchor="middle" font-size="9.5" fill="#991B1B" font-weight="600">Completed</text></g>
+</svg>

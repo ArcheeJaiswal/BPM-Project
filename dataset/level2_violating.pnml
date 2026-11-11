@@ -1,0 +1,228 @@
+<?xml version="1.0" ?>
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+  <net id="net_level2_violating" type="http://www.pnml.org/version-2009/grammar/ptnet">
+    <name>
+      <text>Level 2: Medium (Parallel Concurrency) - Violating Variant</text>
+    </name>
+    <page id="page_0">
+      <place id="p_start">
+        <name>
+          <text>p_start (Application Submitted)</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="p_split">
+        <name>
+          <text>p_split (Ready for Parallel Vetting)</text>
+        </name>
+      </place>
+      <place id="p_cred_wait">
+        <name>
+          <text>p_cred_wait (Awaiting Credit Check)</text>
+        </name>
+      </place>
+      <place id="p_kyc_wait">
+        <name>
+          <text>p_kyc_wait (Awaiting KYC Check)</text>
+        </name>
+      </place>
+      <place id="p_cred_done">
+        <name>
+          <text>p_cred_done (Credit Check Finished)</text>
+        </name>
+      </place>
+      <place id="p_kyc_done">
+        <name>
+          <text>p_kyc_done (KYC Finished)</text>
+        </name>
+      </place>
+      <place id="p_synced">
+        <name>
+          <text>p_synced (Audits Synchronized)</text>
+        </name>
+      </place>
+      <place id="p_cred_bypassed">
+        <name>
+          <text>p_cred_bypassed (Credit Skipped)</text>
+        </name>
+      </place>
+      <place id="p_synced_unverified">
+        <name>
+          <text>p_synced_unverified (Unverified Sync)</text>
+        </name>
+      </place>
+      <place id="p_end">
+        <name>
+          <text>p_end (Process Terminated)</text>
+        </name>
+      </place>
+      <transition id="t_submit">
+        <name>
+          <text>Submit Application</text>
+        </name>
+      </transition>
+      <transition id="t_and_split">
+        <name>
+          <text>AND-Split (Fork)</text>
+        </name>
+      </transition>
+      <transition id="t_credit">
+        <name>
+          <text>Credit Risk Assessment</text>
+        </name>
+      </transition>
+      <transition id="t_kyc">
+        <name>
+          <text>KYC Identity Verification</text>
+        </name>
+      </transition>
+      <transition id="t_and_join">
+        <name>
+          <text>AND-Join (Synchronize)</text>
+        </name>
+      </transition>
+      <transition id="t_app">
+        <name>
+          <text>Approve Loan</text>
+        </name>
+      </transition>
+      <transition id="t_rej">
+        <name>
+          <text>Reject Loan</text>
+        </name>
+      </transition>
+      <transition id="t_skip_cred">
+        <name>
+          <text>Bypass Credit Risk Assessment</text>
+        </name>
+      </transition>
+      <transition id="t_unverified_join">
+        <name>
+          <text>AND-Join (Unverified Bypass)</text>
+        </name>
+      </transition>
+      <transition id="t_premature_app">
+        <name>
+          <text>Approve Loan (Credit Skipped)</text>
+        </name>
+      </transition>
+      <arc id="arc_1" source="p_start" target="t_submit">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_2" source="t_submit" target="p_split">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_3" source="p_split" target="t_and_split">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_4" source="t_and_split" target="p_cred_wait">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_5" source="t_and_split" target="p_kyc_wait">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_6" source="p_cred_wait" target="t_credit">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_7" source="t_credit" target="p_cred_done">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_8" source="p_kyc_wait" target="t_kyc">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_9" source="t_kyc" target="p_kyc_done">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_10" source="p_cred_done" target="t_and_join">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_11" source="p_kyc_done" target="t_and_join">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_12" source="t_and_join" target="p_synced">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_13" source="p_synced" target="t_app">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_14" source="t_app" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_15" source="p_synced" target="t_rej">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_16" source="t_rej" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_17" source="p_cred_wait" target="t_skip_cred">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_18" source="t_skip_cred" target="p_cred_bypassed">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_19" source="p_cred_bypassed" target="t_unverified_join">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_20" source="p_kyc_done" target="t_unverified_join">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_21" source="t_unverified_join" target="p_synced_unverified">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_22" source="p_synced_unverified" target="t_premature_app">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_23" source="t_premature_app" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+    </page>
+  </net>
+</pnml>

@@ -1,0 +1,473 @@
+<?xml version="1.0" ?>
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+  <net id="net_level3_violating" type="http://www.pnml.org/version-2009/grammar/ptnet">
+    <name>
+      <text>Level 3: Advanced (Multi-Gateway: Inclusive, Parallel &amp; Exclusive) - Violating Variant</text>
+    </name>
+    <page id="page_0">
+      <place id="p_start">
+        <name>
+          <text>p_start (Application Submitted)</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="p_split">
+        <name>
+          <text>p_split (Ready for Parallel Vetting)</text>
+        </name>
+      </place>
+      <place id="p_cred_wait">
+        <name>
+          <text>p_cred_wait (Awaiting Credit Risk Check)</text>
+        </name>
+      </place>
+      <place id="p_cred_done">
+        <name>
+          <text>p_cred_done (Credit Check Finished)</text>
+        </name>
+      </place>
+      <place id="p_sec_wait">
+        <name>
+          <text>p_sec_wait (Awaiting Security Evaluation)</text>
+        </name>
+      </place>
+      <place id="p_prop_wait">
+        <name>
+          <text>p_prop_wait (Awaiting Property Appraisal)</text>
+        </name>
+      </place>
+      <place id="p_guar_wait">
+        <name>
+          <text>p_guar_wait (Awaiting Guarantor Audit)</text>
+        </name>
+      </place>
+      <place id="p_prop_skip">
+        <name>
+          <text>p_prop_skip (Property Appraisal Not Required)</text>
+        </name>
+      </place>
+      <place id="p_guar_skip">
+        <name>
+          <text>p_guar_skip (Guarantor Audit Not Required)</text>
+        </name>
+      </place>
+      <place id="p_prop_done">
+        <name>
+          <text>p_prop_done (Property Appraisal Finished)</text>
+        </name>
+      </place>
+      <place id="p_guar_done">
+        <name>
+          <text>p_guar_done (Guarantor Audit Finished)</text>
+        </name>
+      </place>
+      <place id="p_sec_done">
+        <name>
+          <text>p_sec_done (Security Clearance Complete)</text>
+        </name>
+      </place>
+      <place id="p_evaluated">
+        <name>
+          <text>p_evaluated (Audits Synchronized / Risk Evaluation)</text>
+        </name>
+      </place>
+      <place id="p_rework">
+        <name>
+          <text>p_rework (Additional Documents Requested)</text>
+        </name>
+      </place>
+      <place id="p_escalated">
+        <name>
+          <text>p_escalated (Escalated to Committee)</text>
+        </name>
+      </place>
+      <place id="p_comm_vetted">
+        <name>
+          <text>p_comm_vetted (Senior Committee Review Completed)</text>
+        </name>
+      </place>
+      <place id="p_comm_bypassed">
+        <name>
+          <text>p_comm_bypassed (Committee Review Skipped)</text>
+        </name>
+      </place>
+      <place id="p_end">
+        <name>
+          <text>p_end (Process Terminated)</text>
+        </name>
+      </place>
+      <transition id="t_submit">
+        <name>
+          <text>Submit Application</text>
+        </name>
+      </transition>
+      <transition id="t_and_split">
+        <name>
+          <text>AND-Split (Fork Concurrency)</text>
+        </name>
+      </transition>
+      <transition id="t_credit">
+        <name>
+          <text>Credit Risk Assessment</text>
+        </name>
+      </transition>
+      <transition id="t_or_prop">
+        <name>
+          <text>OR-Split: Property Collateral Only</text>
+        </name>
+      </transition>
+      <transition id="t_or_guar">
+        <name>
+          <text>OR-Split: Corporate Guarantor Only</text>
+        </name>
+      </transition>
+      <transition id="t_or_both">
+        <name>
+          <text>OR-Split: Both Collateral &amp; Guarantor</text>
+        </name>
+      </transition>
+      <transition id="t_prop_appraisal">
+        <name>
+          <text>Real Estate Asset Appraisal</text>
+        </name>
+      </transition>
+      <transition id="t_guar_audit">
+        <name>
+          <text>Corporate Guarantor Audit</text>
+        </name>
+      </transition>
+      <transition id="t_or_join_prop">
+        <name>
+          <text>OR-Join: Property Synchronized</text>
+        </name>
+      </transition>
+      <transition id="t_or_join_guar">
+        <name>
+          <text>OR-Join: Guarantor Synchronized</text>
+        </name>
+      </transition>
+      <transition id="t_or_join_both">
+        <name>
+          <text>OR-Join: Both Synchronized</text>
+        </name>
+      </transition>
+      <transition id="t_and_join">
+        <name>
+          <text>AND-Join (Synchronize Audits)</text>
+        </name>
+      </transition>
+      <transition id="t_low_app">
+        <name>
+          <text>Standard Manager Approval</text>
+        </name>
+      </transition>
+      <transition id="t_direct_rej">
+        <name>
+          <text>Reject Loan</text>
+        </name>
+      </transition>
+      <transition id="t_req_docs">
+        <name>
+          <text>Request Additional Documents (Rework)</text>
+        </name>
+      </transition>
+      <transition id="t_resubmit">
+        <name>
+          <text>Resubmit Updated Documents</text>
+        </name>
+      </transition>
+      <transition id="t_escalate">
+        <name>
+          <text>Escalate to Senior Risk Committee</text>
+        </name>
+      </transition>
+      <transition id="t_comm_rev">
+        <name>
+          <text>Senior Committee Review</text>
+        </name>
+      </transition>
+      <transition id="t_comm_app">
+        <name>
+          <text>Committee Approve Loan</text>
+        </name>
+      </transition>
+      <transition id="t_comm_rej">
+        <name>
+          <text>Committee Reject Loan</text>
+        </name>
+      </transition>
+      <transition id="t_comm_bypass">
+        <name>
+          <text>Executive Fast-Track Override (Skip Committee Review)</text>
+        </name>
+      </transition>
+      <transition id="t_unreviewed_app">
+        <name>
+          <text>Committee Approve Loan (Unreviewed)</text>
+        </name>
+      </transition>
+      <arc id="arc_1" source="p_start" target="t_submit">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_2" source="t_submit" target="p_split">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_3" source="p_split" target="t_and_split">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_4" source="t_and_split" target="p_cred_wait">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_5" source="t_and_split" target="p_sec_wait">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_6" source="p_cred_wait" target="t_credit">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_7" source="t_credit" target="p_cred_done">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_8" source="p_sec_wait" target="t_or_prop">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_9" source="t_or_prop" target="p_prop_wait">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_10" source="t_or_prop" target="p_guar_skip">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_11" source="p_sec_wait" target="t_or_guar">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_12" source="t_or_guar" target="p_guar_wait">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_13" source="t_or_guar" target="p_prop_skip">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_14" source="p_sec_wait" target="t_or_both">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_15" source="t_or_both" target="p_prop_wait">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_16" source="t_or_both" target="p_guar_wait">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_17" source="p_prop_wait" target="t_prop_appraisal">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_18" source="t_prop_appraisal" target="p_prop_done">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_19" source="p_guar_wait" target="t_guar_audit">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_20" source="t_guar_audit" target="p_guar_done">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_21" source="p_prop_done" target="t_or_join_prop">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_22" source="p_guar_skip" target="t_or_join_prop">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_23" source="t_or_join_prop" target="p_sec_done">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_24" source="p_guar_done" target="t_or_join_guar">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_25" source="p_prop_skip" target="t_or_join_guar">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_26" source="t_or_join_guar" target="p_sec_done">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_27" source="p_prop_done" target="t_or_join_both">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_28" source="p_guar_done" target="t_or_join_both">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_29" source="t_or_join_both" target="p_sec_done">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_30" source="p_cred_done" target="t_and_join">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_31" source="p_sec_done" target="t_and_join">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_32" source="t_and_join" target="p_evaluated">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_33" source="p_evaluated" target="t_low_app">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_34" source="t_low_app" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_35" source="p_evaluated" target="t_direct_rej">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_36" source="t_direct_rej" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_37" source="p_evaluated" target="t_req_docs">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_38" source="t_req_docs" target="p_rework">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_39" source="p_rework" target="t_resubmit">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_40" source="t_resubmit" target="p_evaluated">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_41" source="p_evaluated" target="t_escalate">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_42" source="t_escalate" target="p_escalated">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_43" source="p_escalated" target="t_comm_rev">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_44" source="t_comm_rev" target="p_comm_vetted">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_45" source="p_comm_vetted" target="t_comm_app">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_46" source="t_comm_app" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_47" source="p_comm_vetted" target="t_comm_rej">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_48" source="t_comm_rej" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_49" source="p_escalated" target="t_comm_bypass">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_50" source="t_comm_bypass" target="p_comm_bypassed">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_51" source="p_comm_bypassed" target="t_unreviewed_app">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+      <arc id="arc_52" source="t_unreviewed_app" target="p_end">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+    </page>
+  </net>
+</pnml>

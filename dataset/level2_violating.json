@@ -1,0 +1,420 @@
+{
+  "model_id": "level2_violating",
+  "title": "Level 2: Medium (Parallel Concurrency)",
+  "variant": "violating",
+  "domain": "Commercial & Mortgage Lending",
+  "architecture_summary": "Parallel Concurrency via AND-Split (Fork) and AND-Join (Synchronization)",
+  "concurrency_degree": "2 Concurrent Tokens (Multi-Threaded Petri Net)",
+  "compliance_rule": {
+    "text": "A loan must not be approved without completing BOTH Credit Risk Assessment and KYC/AML Identity Verification.",
+    "rule_spec": {
+      "prerequisite": [
+        "Credit Risk Assessment",
+        "KYC Identity Verification"
+      ],
+      "target": "Approve Loan"
+    }
+  },
+  "pools": {
+    "top_pool": {
+      "title": "\ud83c\udfca Pool: Customer / Borrower Portal",
+      "nodes": [
+        {
+          "id": "p_start",
+          "type": "start_event",
+          "label": "Start",
+          "col": 0
+        },
+        {
+          "id": "p_submit",
+          "type": "task",
+          "task_type": "user",
+          "label": "Access Portal &\nSubmit Commercial File",
+          "col": 1
+        },
+        {
+          "id": "p_receive",
+          "type": "task",
+          "task_type": "receive",
+          "label": "Receive Official\nDecision Letter",
+          "col": 6
+        },
+        {
+          "id": "p_end",
+          "type": "end_event",
+          "label": "Completed",
+          "col": 7
+        }
+      ]
+    },
+    "primary_pool": {
+      "title": "\ud83c\udfe6 Pool: Commercial Bank (Dual-Audit Concurrency)",
+      "lanes": [
+        {
+          "id": "lane_intake",
+          "name": "Commercial Intake",
+          "bg": "#EFF6FF"
+        },
+        {
+          "id": "lane_audit",
+          "name": "Technical & Collateral Audit",
+          "bg": "#FEFCE8"
+        },
+        {
+          "id": "lane_manager",
+          "name": "Branch Underwriting",
+          "bg": "#FAF5FF"
+        }
+      ]
+    }
+  },
+  "flow_nodes": [
+    {
+      "id": "t_recv",
+      "type": "task",
+      "task_type": "service",
+      "lane": "lane_intake",
+      "label": "Commercial Intake &\nCreate Loan Dossier",
+      "col": 1
+    },
+    {
+      "id": "and_split",
+      "type": "gateway_and",
+      "lane": "lane_audit",
+      "label": "",
+      "col": 2
+    },
+    {
+      "id": "t_check",
+      "type": "task",
+      "task_type": "service",
+      "lane": "lane_audit",
+      "label": "Mandatory Credit Risk\nAssessment",
+      "col": 3,
+      "track": 0,
+      "fill": "#EFF6FF",
+      "stroke": "#2563EB"
+    },
+    {
+      "id": "t_collateral",
+      "type": "task",
+      "task_type": "service",
+      "lane": "lane_audit",
+      "label": "Collateral Valuation &\nAsset Vetting",
+      "col": 3,
+      "track": 1
+    },
+    {
+      "id": "and_join",
+      "type": "gateway_and",
+      "lane": "lane_audit",
+      "label": "",
+      "col": 4
+    },
+    {
+      "id": "xor_eval",
+      "type": "gateway_xor",
+      "lane": "lane_manager",
+      "label": "Low Risk?",
+      "col": 5
+    },
+    {
+      "id": "t_app",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_manager",
+      "label": "Branch Manager\nApprove Loan",
+      "col": 6,
+      "track": 0,
+      "fill": "#DCFCE7",
+      "stroke": "#16A34A"
+    },
+    {
+      "id": "t_rej",
+      "type": "task",
+      "task_type": "user",
+      "lane": "lane_manager",
+      "label": "Branch Manager\nReject Loan",
+      "col": 6,
+      "track": 1,
+      "fill": "#FEE2E2",
+      "stroke": "#DC2626"
+    },
+    {
+      "id": "end_app",
+      "type": "end_event",
+      "lane": "lane_manager",
+      "label": "Approved",
+      "col": 7,
+      "track": 0
+    },
+    {
+      "id": "end_rej",
+      "type": "end_event",
+      "lane": "lane_manager",
+      "label": "Rejected",
+      "col": 7,
+      "track": 1
+    }
+  ],
+  "flow_edges": [
+    {
+      "from": "p_start",
+      "to": "p_submit"
+    },
+    {
+      "from": "p_receive",
+      "to": "p_end"
+    },
+    {
+      "from": "p_submit",
+      "to": "t_recv",
+      "dashed": true
+    },
+    {
+      "from": "t_recv",
+      "to": "and_split"
+    },
+    {
+      "from": "and_split",
+      "to": "t_check"
+    },
+    {
+      "from": "and_split",
+      "to": "t_collateral"
+    },
+    {
+      "from": "t_check",
+      "to": "and_join"
+    },
+    {
+      "from": "t_collateral",
+      "to": "and_join"
+    },
+    {
+      "from": "and_join",
+      "to": "xor_eval"
+    },
+    {
+      "from": "xor_eval",
+      "to": "t_app",
+      "label": "Approved"
+    },
+    {
+      "from": "xor_eval",
+      "to": "t_rej",
+      "label": "Rejected"
+    },
+    {
+      "from": "t_app",
+      "to": "end_app"
+    },
+    {
+      "from": "t_rej",
+      "to": "end_rej"
+    },
+    {
+      "from": "t_app",
+      "to": "p_receive",
+      "dashed": true
+    },
+    {
+      "from": "t_collateral",
+      "to": "t_app",
+      "label": "\u26a0\ufe0f Skip Credit Assessment",
+      "violation": true
+    }
+  ],
+  "petri_net_spec": {
+    "places": [
+      {
+        "id": "p_start",
+        "label": "p_start (Application Submitted)",
+        "initial_tokens": 1,
+        "lane": "Lane 1: Intake Desk"
+      },
+      {
+        "id": "p_split",
+        "label": "p_split (Ready for Parallel Vetting)",
+        "initial_tokens": 0,
+        "lane": "Lane 1: Intake Desk"
+      },
+      {
+        "id": "p_cred_wait",
+        "label": "p_cred_wait (Awaiting Credit Check)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Financial Risk Dept"
+      },
+      {
+        "id": "p_kyc_wait",
+        "label": "p_kyc_wait (Awaiting KYC Check)",
+        "initial_tokens": 0,
+        "lane": "Lane 3: Legal & Compliance"
+      },
+      {
+        "id": "p_cred_done",
+        "label": "p_cred_done (Credit Check Finished)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Financial Risk Dept"
+      },
+      {
+        "id": "p_kyc_done",
+        "label": "p_kyc_done (KYC Finished)",
+        "initial_tokens": 0,
+        "lane": "Lane 3: Legal & Compliance"
+      },
+      {
+        "id": "p_synced",
+        "label": "p_synced (Audits Synchronized)",
+        "initial_tokens": 0,
+        "lane": "Lane 4: Underwriting Officer"
+      },
+      {
+        "id": "p_cred_bypassed",
+        "label": "p_cred_bypassed (Credit Skipped)",
+        "initial_tokens": 0,
+        "lane": "Lane 2: Financial Risk Dept"
+      },
+      {
+        "id": "p_synced_unverified",
+        "label": "p_synced_unverified (Unverified Sync)",
+        "initial_tokens": 0,
+        "lane": "Lane 4: Underwriting Officer"
+      },
+      {
+        "id": "p_end",
+        "label": "p_end (Process Terminated)",
+        "initial_tokens": 0,
+        "lane": "Lane 4: Underwriting Officer"
+      }
+    ],
+    "transitions": {
+      "t_submit": {
+        "label": "Submit Application",
+        "inputs": [
+          "p_start"
+        ],
+        "outputs": [
+          "p_split"
+        ],
+        "type": "standard",
+        "lane": "Lane 1: Intake Desk"
+      },
+      "t_and_split": {
+        "label": "AND-Split (Fork)",
+        "inputs": [
+          "p_split"
+        ],
+        "outputs": [
+          "p_cred_wait",
+          "p_kyc_wait"
+        ],
+        "type": "standard",
+        "lane": "Lane 1: Intake Desk"
+      },
+      "t_credit": {
+        "label": "Credit Risk Assessment",
+        "inputs": [
+          "p_cred_wait"
+        ],
+        "outputs": [
+          "p_cred_done"
+        ],
+        "type": "prerequisite",
+        "lane": "Lane 2: Financial Risk Dept"
+      },
+      "t_kyc": {
+        "label": "KYC Identity Verification",
+        "inputs": [
+          "p_kyc_wait"
+        ],
+        "outputs": [
+          "p_kyc_done"
+        ],
+        "type": "prerequisite",
+        "lane": "Lane 3: Legal & Compliance"
+      },
+      "t_and_join": {
+        "label": "AND-Join (Synchronize)",
+        "inputs": [
+          "p_cred_done",
+          "p_kyc_done"
+        ],
+        "outputs": [
+          "p_synced"
+        ],
+        "type": "standard",
+        "lane": "Lane 4: Underwriting Officer"
+      },
+      "t_app": {
+        "label": "Approve Loan",
+        "inputs": [
+          "p_synced"
+        ],
+        "outputs": [
+          "p_end"
+        ],
+        "type": "decision",
+        "lane": "Lane 4: Underwriting Officer"
+      },
+      "t_rej": {
+        "label": "Reject Loan",
+        "inputs": [
+          "p_synced"
+        ],
+        "outputs": [
+          "p_end"
+        ],
+        "type": "decision",
+        "lane": "Lane 4: Underwriting Officer"
+      },
+      "t_skip_cred": {
+        "label": "Bypass Credit Risk Assessment",
+        "inputs": [
+          "p_cred_wait"
+        ],
+        "outputs": [
+          "p_cred_bypassed"
+        ],
+        "type": "violation",
+        "lane": "Lane 2: Financial Risk Dept"
+      },
+      "t_unverified_join": {
+        "label": "AND-Join (Unverified Bypass)",
+        "inputs": [
+          "p_cred_bypassed",
+          "p_kyc_done"
+        ],
+        "outputs": [
+          "p_synced_unverified"
+        ],
+        "type": "violation",
+        "lane": "Lane 4: Underwriting Officer"
+      },
+      "t_premature_app": {
+        "label": "Approve Loan (Credit Skipped)",
+        "inputs": [
+          "p_synced_unverified"
+        ],
+        "outputs": [
+          "p_end"
+        ],
+        "type": "violation",
+        "lane": "Lane 4: Underwriting Officer"
+      }
+    },
+    "initial_marking": {
+      "p_start": 1,
+      "p_split": 0,
+      "p_cred_wait": 0,
+      "p_kyc_wait": 0,
+      "p_cred_done": 0,
+      "p_kyc_done": 0,
+      "p_synced": 0,
+      "p_cred_bypassed": 0,
+      "p_synced_unverified": 0,
+      "p_end": 0
+    },
+    "final_place": "p_end"
+  }
+}
